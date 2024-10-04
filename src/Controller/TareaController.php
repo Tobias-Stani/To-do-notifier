@@ -17,30 +17,56 @@ class TareaController extends AbstractController
     #[Route('/', name: 'app_tarea_index', methods: ['GET'])]
     public function index(TareaRepository $tareaRepository): Response
     {
+        // Obtener todas las tareas
+        $tareas = $tareaRepository->findAll();
+    
+        // Transformar las tareas en un formato que FullCalendar entiende
+        $events = [];
+        foreach ($tareas as $tarea) {
+            $events[] = [
+                'id' => $tarea->getId(),
+                'title' => $tarea->getTitulo(),
+                'start' => $tarea->getFecha()->format('Y-m-d'), // Asegúrate de que 'fecha' sea un objeto DateTime
+                // Puedes agregar una propiedad 'end' si tienes una fecha de finalización.
+            ];
+        }
+    
         return $this->render('tarea/index.html.twig', [
-            'tareas' => $tareaRepository->findAll(),
+            'events' => json_encode($events), // Asegúrate de pasar los eventos a la vista
         ]);
     }
+    
 
     #[Route('/new', name: 'app_tarea_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $tarea = new Tarea();
+        
+        // Obtener la fecha del parámetro de consulta
+        $fechaParam = $request->query->get('fecha');
+        if ($fechaParam) {
+            $fecha = \DateTime::createFromFormat('Y-m-d', $fechaParam);
+            if ($fecha) {
+                $tarea->setFecha($fecha); // Establecer la fecha en la nueva tarea
+            }
+        }
+    
         $form = $this->createForm(TareaType::class, $tarea);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($tarea);
             $entityManager->flush();
-
+    
             return $this->redirectToRoute('app_tarea_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('tarea/new.html.twig', [
             'tarea' => $tarea,
             'form' => $form,
         ]);
     }
+    
 
     #[Route('/{id}', name: 'app_tarea_show', methods: ['GET'])]
     public function show(Tarea $tarea): Response

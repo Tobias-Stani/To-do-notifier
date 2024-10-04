@@ -12,12 +12,24 @@ class TareaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('titulo')
-            ->add('descripcion')
-            ->add('fecha', null, [
-                'widget' => 'single_text',
-            ])
-        ;
+        ->add('titulo', null, [
+            'attr' => [
+                'class' => 'form-control',
+                'placeholder' => 'Ingresa el título'
+            ]
+        ])
+        ->add('descripcion', null, [
+            'attr' => [
+                'class' => 'form-control',
+                'placeholder' => 'Ingresa la descripción'
+            ]
+        ])
+        ->add('fecha', null, [
+            'widget' => 'single_text',
+            'attr' => [
+                'class' => 'form-control',
+            ]
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

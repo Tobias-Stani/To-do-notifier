@@ -1,39 +1,54 @@
-{% extends 'base.html.twig' %}
+{% extends 'extends/iboxContent.html.twig' %}
 
-{% block title %}Tarea index{% endblock %}
+{% block tituloPagina %} Tareas {% endblock %}
 
-{% block body %}
-    <h1>Tarea index</h1>
+{% block contenidoIbox %}
+    <h1>Tareas</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Titulo</th>
-                <th>Descripcion</th>
-                <th>Fecha</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for tarea in tareas %}
-            <tr>
-                <td>{{ tarea.id }}</td>
-                <td>{{ tarea.titulo }}</td>
-                <td>{{ tarea.descripcion }}</td>
-                <td>{{ tarea.fecha ? tarea.fecha|date('Y-m-d') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_tarea_show', {'id': tarea.id}) }}">show</a>
-                    <a href="{{ path('app_tarea_edit', {'id': tarea.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <!-- Contenedor del calendario con un ancho máximo de 1200px -->
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <div id="calendar"></div>
+    </div>
 
-    <a href="{{ path('app_tarea_new') }}">Create new</a>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.css" rel="stylesheet">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var events = {{ events|raw }}; // Cargar eventos desde PHP
+            
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: events, // Pasa los eventos al calendario
+                editable: true,
+
+                // Manejar clic en un día
+                dateClick: function(info) {
+                    // Redirigir al formulario para crear un evento
+                    window.location.href = "{{ path('app_tarea_new') }}?fecha=" + info.dateStr;
+                },
+
+                eventRender: function(info) {
+                    info.el.classList.add('custom-event-class'); // Añadir clase personalizada
+                },
+
+                eventClick: function(info) {
+                    // Manejar clic en un evento (opcional)
+                    alert('Tarea: ' + info.event.title);
+                }
+            });
+            calendar.render();
+        });
+    </script>
+
+    <style>
+        /* Estilos para el color del texto de los eventos */
+        .custom-event-class {
+            color: white !important; 
+            background-color: #ffff; 
+        }
+    </style>
+
+    <a href="{{ path('app_tarea_new') }}">Crear nueva tarea</a>
 {% endblock %}
