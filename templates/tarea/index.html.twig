@@ -3,38 +3,55 @@
 {% block tituloPagina %} Tareas {% endblock %}
 
 {% block contenidoIbox %}
-    <h1>Tareas</h1>
 
-    <!-- Contenedor del calendario con un ancho máximo de 1200px -->
+    <a class="btn" style="margin-top: 10px; background-color: #C1CFA1; color: white;" href="{{ path('app_tarea_new') }}">Crear nueva tarea</a>
+
     <div style="max-width: 1200px; margin: 0 auto;">
         <div id="calendar"></div>
     </div>
+
+    <style>
+        /* Personalizar los títulos del calendario */
+        .fc-toolbar-title {
+            font-size: 1rem; 
+            font-weight: bold;
+        }
+
+        .fc-event {
+            background-color: #EDE8DC !important; 
+            border: none !important; 
+            color: #ffffff !important; 
+            font-weight: bold; 
+            padding: 5px; 
+            border-radius: 5px; 
+        }
+
+        .fc-daygrid-day:hover {
+            background-color: #EAD8B1 !important; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease;
+        }
+
+    </style>
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.css" rel="stylesheet">
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var events = {{ events|raw }}; // Cargar eventos desde PHP
+            var events = {{ events|raw }};
             
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                events: events, // Pasa los eventos al calendario
+                events: events,
                 editable: true,
 
-                // Manejar clic en un día
                 dateClick: function(info) {
-                    // Redirigir al formulario para crear un evento
                     window.location.href = "{{ path('app_tarea_new') }}?fecha=" + info.dateStr;
                 },
 
-                eventRender: function(info) {
-                    info.el.classList.add('custom-event-class'); // Añadir clase personalizada
-                },
-
                 eventClick: function(info) {
-                    // Manejar clic en un evento (opcional)
                     alert('Tarea: ' + info.event.title);
                 }
             });
@@ -42,13 +59,35 @@
         });
     </script>
 
-    <style>
-        /* Estilos para el color del texto de los eventos */
-        .custom-event-class {
-            color: white !important; 
-            background-color: #ffff; 
-        }
-    </style>
 
-    <a href="{{ path('app_tarea_new') }}">Crear nueva tarea</a>
+    <!-- Tabla de las tareas de la semana actual -->
+    <h2 style="margin-top: 20px;">Tareas de esta semana</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for tarea in tareasSemana %}
+            <tr>
+                <td>{{ tarea.titulo }}</td>
+                <td>{{ tarea.descripcion }}</td>
+                <td>{{ tarea.fecha ? tarea.fecha|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_tarea_show', {'id': tarea.id}) }}">Ver</a>
+                    <a href="{{ path('app_tarea_edit', {'id': tarea.id}) }}">Editar</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">No hay registros.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}

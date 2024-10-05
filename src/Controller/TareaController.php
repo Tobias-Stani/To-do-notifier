@@ -17,22 +17,38 @@ class TareaController extends AbstractController
     #[Route('/', name: 'app_tarea_index', methods: ['GET'])]
     public function index(TareaRepository $tareaRepository): Response
     {
-        // Obtener todas las tareas
         $tareas = $tareaRepository->findAll();
     
-        // Transformar las tareas en un formato que FullCalendar entiende
+        $ultimasTareas = $tareaRepository->findBy([], ['fecha' => 'DESC'], 5);
+
+        //calcula tareas de la semana.
+        $inicioSemana = new \DateTime('monday this week');
+        $finSemana = new \DateTime('sunday this week');
+        $finSemana->setTime(23, 59, 59);
+
+        // Obtener las tareas de la semana actual
+        $tareasSemana = $tareaRepository->createQueryBuilder('t')
+            ->where('t.fecha >= :inicioSemana')
+            ->andWhere('t.fecha <= :finSemana')
+            ->setParameter('inicioSemana', $inicioSemana)
+            ->setParameter('finSemana', $finSemana)
+            ->getQuery()
+            ->getResult();
+
         $events = [];
         foreach ($tareas as $tarea) {
             $events[] = [
                 'id' => $tarea->getId(),
                 'title' => $tarea->getTitulo(),
-                'start' => $tarea->getFecha()->format('Y-m-d'), // Asegúrate de que 'fecha' sea un objeto DateTime
-                // Puedes agregar una propiedad 'end' si tienes una fecha de finalización.
+                'start' => $tarea->getFecha()->format('Y-m-d'),
             ];
         }
     
         return $this->render('tarea/index.html.twig', [
+            'tareas' => $tareas,
+            'ultimasTareas' => $ultimasTareas, // Enviamos las últimas 5 tareas
             'events' => json_encode($events), // Asegúrate de pasar los eventos a la vista
+            'tareasSemana' => $tareasSemana,
         ]);
     }
     
