@@ -7,6 +7,7 @@ use App\Form\TareaType;
 use App\Repository\TareaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -120,4 +121,25 @@ class TareaController extends AbstractController
 
         return $this->redirectToRoute('app_tarea_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/cronometro/finish', name: 'app_cronometro_finish', methods: ['POST'])]
+    public function finishCronometro(Request $request): JsonResponse
+    {
+        // Obtener los datos enviados por AJAX en formato JSON
+        $data = json_decode($request->getContent(), true);
+
+        // Verificar si el tiempo fue enviado
+        if (isset($data['timeElapsed'])) {
+            $timeElapsed = $data['timeElapsed']; // Tiempo en segundos
+
+            // Procesar el tiempo transcurrido según lo que necesites (puedes guardarlo en la base de datos, etc.)
+
+            // Devolver una respuesta de éxito
+            return new JsonResponse(['message' => 'Tiempo registrado correctamente', 'timeElapsed' => $timeElapsed]);
+        }
+
+        // Si no se recibió el tiempo, devolver un error
+        return new JsonResponse(['error' => 'No se envió tiempo'], 400);
+    }
+
 }

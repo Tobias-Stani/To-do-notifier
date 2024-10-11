@@ -43,7 +43,7 @@
         /* Estilo para el cronómetro */
         .clock-container {
             margin-top: 30px;
-            max-width: 1200px; /* Asegurarse de que no supere los 1200px */
+            max-width: 1200px;
             margin-bottom: 30px;
             background-color: #080808;
             border-radius: 5px;
@@ -55,14 +55,13 @@
         
         .clock-col {
             text-align: center;
-            min-width: 60px; /* Reducir el ancho mínimo para que se acerquen */
+            min-width: 60px; 
             position: relative;
-            margin-right: 10px; /* Espaciado más pequeño entre columnas */
+            margin-right: 10px; 
         }
         
-        /* Remover margen del último elemento para evitar espacio extra */
         .clock-col:last-child {
-            margin-right: 0; /* Sin margen en el último elemento */
+            margin-right: 0; 
         }
         
         .clock-timer {
@@ -102,8 +101,8 @@
         
         @media (min-width: 1200px) {
             .clock-container {
-                justify-content: center; /* Mantener centrado en pantallas grandes */
-                margin-top: 50px; /* Espacio superior para evitar superposición */
+                justify-content: center; 
+                margin-top: 50px; 
             }
         }
         
@@ -167,7 +166,7 @@
 
     <div class="clock-container">
         <div class="clock-col">
-            <p class="clock-day clock-timer">Mon</p>  <!-- Se inicializa con un día ficticio -->
+            <p class="clock-day clock-timer">Mon</p> 
             <p class="clock-label">Day</p>
         </div>
         <div class="clock-col">
@@ -175,14 +174,14 @@
             <p class="clock-label">Hours</p>
         </div>
         <div class="clock-col"> 
-            <p class="clock-timer">:</p> <!-- Añadir dos puntos -->
+            <p class="clock-timer">:</p> 
         </div>
         <div class="clock-col">
             <p class="clock-minutes clock-timer">0</p>
             <p class="clock-label">Minutes</p>
         </div>
         <div class="clock-col"> 
-            <p class="clock-timer">:</p> <!-- Añadir dos puntos -->
+            <p class="clock-timer">:</p> 
         </div>
         <div class="clock-col">
             <p class="clock-seconds clock-timer">0</p>
@@ -194,30 +193,27 @@
         <button class="btn-cronometro" id="start">Iniciar</button>
         <button class="btn-cronometro" id="pause">Pausar</button>
         <button class="btn-cronometro" id="reset">Reiniciar</button>
+        <button class="btn-cronometro" id="finish">Finalizar</button> 
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
     <script>
-        let timer; // variable para el setInterval
-        let isRunning = false; // estado del cronómetro
-        let seconds = 0; // total de segundos transcurridos
-
-        // Función para actualizar el cronómetro y el día
+        let timer;
+        let isRunning = false;
+        let seconds = 0;
+    
         function updateDisplay() {
-            const days = Math.floor(seconds / (3600 * 24));
             const hours = Math.floor((seconds % (3600 * 24)) / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
             const secs = seconds % 60;
-
-            // Actualizar el día actual
-            const dayName = moment().format('dddd'); // Obtiene el nombre completo del día
+    
+            const dayName = moment().format('dddd');
             document.querySelector('.clock-day').textContent = dayName;
-
             document.querySelector('.clock-hours').textContent = hours;
             document.querySelector('.clock-minutes').textContent = minutes;
             document.querySelector('.clock-seconds').textContent = secs;
         }
-
+    
         function startTimer() {
             if (!isRunning) {
                 isRunning = true;
@@ -227,26 +223,52 @@
                 }, 1000);
             }
         }
-
+    
         function pauseTimer() {
             if (isRunning) {
                 clearInterval(timer);
                 isRunning = false;
             }
         }
-
+    
         function resetTimer() {
             clearInterval(timer);
             isRunning = false;
             seconds = 0;
             updateDisplay();
         }
-
+    
+        function finishTimer() {
+            pauseTimer(); // Pausa el cronómetro al finalizar
+            const csrfToken = '{{ csrf_token('finish_timer') }}'; // Si usas un token CSRF, ajusta aquí
+    
+            // Enviar tiempo transcurrido al servidor
+            fetch('{{ path('app_cronometro_finish') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken // Enviar token CSRF, si es necesario
+                },
+                body: JSON.stringify({ timeElapsed: seconds })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Error en la solicitud');
+            })
+            .then(data => {
+                alert('Tiempo registrado: ' + seconds + ' segundos');
+                resetTimer(); // Reiniciar el cronómetro tras finalizar
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    
         document.getElementById('start').addEventListener('click', startTimer);
         document.getElementById('pause').addEventListener('click', pauseTimer);
         document.getElementById('reset').addEventListener('click', resetTimer);
-
-        // Inicializar el día al cargar
+        document.getElementById('finish').addEventListener('click', finishTimer); // Evento para el botón Finalizar
+    
         updateDisplay(); // Mostrar el día actual en la carga
     </script>
 
