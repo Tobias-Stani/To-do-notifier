@@ -177,37 +177,42 @@
         </tbody>
     </table>
 
-    <div class="clock-container">
-        <div class="clock-col">
-            <p class="clock-day clock-timer">Mon</p> 
-            <p class="clock-label">Day</p>
+    <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100" style="margin-top: 5%;">
+        <div class="clock-container d-flex justify-content-center align-items-center flex-wrap mb-4">
+            <div class="clock-col text-center flex-fill m-2" style="min-width: 80px;">
+                <p class="clock-day clock-timer">Mon</p>
+                <p class="clock-label">Day</p>
+            </div>
+            <div class="clock-col text-center flex-fill m-2" style="min-width: 80px;">
+                <p class="clock-hours clock-timer">0</p>
+                <p class="clock-label">Hours</p>
+            </div>
+            <div class="clock-col text-center m-2">
+                <p class="clock-timer">:</p>
+            </div>
+            <div class="clock-col text-center flex-fill m-2" style="min-width: 80px;">
+                <p class="clock-minutes clock-timer">0</p>
+                <p class="clock-label">Minutes</p>
+            </div>
+            <div class="clock-col text-center m-2">
+                <p class="clock-timer">:</p>
+            </div>
+            <div class="clock-col text-center flex-fill m-2" style="min-width: 80px;">
+                <p class="clock-seconds clock-timer">0</p>
+                <p class="clock-label">Seconds</p>
+            </div>
         </div>
-        <div class="clock-col">
-            <p class="clock-hours clock-timer">0</p>
-            <p class="clock-label">Hours</p>
-        </div>
-        <div class="clock-col"> 
-            <p class="clock-timer">:</p> 
-        </div>
-        <div class="clock-col">
-            <p class="clock-minutes clock-timer">0</p>
-            <p class="clock-label">Minutes</p>
-        </div>
-        <div class="clock-col"> 
-            <p class="clock-timer">:</p> 
-        </div>
-        <div class="clock-col">
-            <p class="clock-seconds clock-timer">0</p>
-            <p class="clock-label">Seconds</p>
+    
+        <div class="buttons-container d-flex justify-content-center flex-wrap">
+            <button class="btn-cronometro btn btn-primary mx-2 my-2" id="start">Iniciar</button>
+            <button class="btn-cronometro btn btn-secondary mx-2 my-2" id="pause">Pausar</button>
+            <button class="btn-cronometro btn btn-warning mx-2 my-2" id="reset">Reiniciar</button>
+            <button class="btn-cronometro btn btn-danger mx-2 my-2" id="finish">Finalizar</button>
         </div>
     </div>
 
-    <div class="buttons-container">
-        <button class="btn-cronometro" id="start">Iniciar</button>
-        <button class="btn-cronometro" id="pause">Pausar</button>
-        <button class="btn-cronometro" id="reset">Reiniciar</button>
-        <button class="btn-cronometro" id="finish">Finalizar</button> 
-    </div>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
 <script>
@@ -301,35 +306,47 @@
 
 
 
+<h1 class="text-center" style="margin-top:7%; font-weight: 500;">Lista de Tiempos</h1>
 <div class="container mt-4" style="margin-top:5%;">
-    <h1>Lista de Tiempos</h1>
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-6">
-                <table id="cronometroTable" class="table table-striped table-bordered">
-                    <thead>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6">
+            <table id="cronometroTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Tiempo</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cronometro in cronometros %}
                         <tr>
-                            <th>Tiempo</th>
-                            <th>Fecha</th>
+                            <td>{{ cronometro.formattedTime }}</td>
+                            <td>{{ cronometro.date|date('d-m-Y') }}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for cronometro in cronometros %}
-                            <tr>
-                                <td>{{ cronometro.formattedTime }}</td>
-                                <td>{{ cronometro.date|date('d-m-Y') }}</td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="2">No hay cronómetros registrados.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                    {% else %}
+                        <tr>
+                            <td colspan="2">No hay cronómetros registrados.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-12 col-md-6" style="margin-top:10%; margin-left:-8%">
+            <div class="card text-center">
+              <div class="card-header" style="font-weight: 700;">
+                Tiempo Total de estudio de hoy📚📚:
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">🎊Este es tu tiempo🎊 </h5>
+                <p class="card-text">{{ totalTime }}</p>
+              </div>
             </div>
         </div>
-    </div>
 
-    <h2>Tiempo Total de estudio: {{ totalTime }}</h2>
+    </div>
+</div>
+
 
 
     <script>
@@ -341,5 +358,4 @@
             });
         });
     </script>
-
 {% endblock %}

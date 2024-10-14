@@ -17,6 +17,30 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/tarea')]
 class TareaController extends AbstractController
 {
+
+    #funcion para formatear tiempo
+    private function formatTime(int $seconds): string
+    {
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        $remainingSeconds = $seconds % 60;
+
+        $formattedTime = '';
+
+        if ($hours > 0) {
+            $formattedTime .= $hours . ' Horas : ';
+        }
+        if ($minutes > 0) {
+            $formattedTime .= $minutes . ' Minutos : ';
+        }
+        if ($remainingSeconds > 0) {
+            $formattedTime .= $remainingSeconds;
+        }
+
+        return trim($formattedTime) . ' Segundos : ';
+    }
+        
+
     #[Route('/', name: 'app_tarea_index', methods: ['GET'])]
     public function index(TareaRepository $tareaRepository, CronometroRepository $cronometroRepository): Response
     {
@@ -26,12 +50,25 @@ class TareaController extends AbstractController
         $cronometros = $cronometroRepository->findAll();
         $totalTimeInSeconds = 0;
 
+        // Obtener la fecha actual
+        $today = new \DateTime();
+        $today->setTime(0, 0, 0);
+
         foreach ($cronometros as $cronometro) {
             $cronometro->formattedTime = $this->formatTime($cronometro->getTime());
             $totalTimeInSeconds += $cronometro->getTime();
         }
 
         $formattedTotalTime = $this->formatTime($totalTimeInSeconds);
+
+        //obtiene los registros de tiempos del dia.
+        $cronometros = $cronometroRepository->createQueryBuilder('c')
+        ->where('c.date >= :todayStart')
+        ->andWhere('c.date < :tomorrowStart')
+        ->setParameter('todayStart', $today)
+        ->setParameter('tomorrowStart', (clone $today)->modify('+1 day'))
+        ->getQuery()
+        ->getResult();
 
         //calcula tareas de la semana.
         $inicioSemana = new \DateTime('monday this week');
@@ -162,27 +199,29 @@ class TareaController extends AbstractController
         return new JsonResponse(['error' => 'No se envió tiempo'], 400);
     }
 
-    #funcion para formatear tiempo
-    private function formatTime(int $seconds): string
+    #[Route('/cronometros', name: 'app_cronometros')]
+    public function listCronometros(CronometroRepository $cronometroRepository): Response
     {
-        $hours = floor($seconds / 3600);
-        $minutes = floor(($seconds % 3600) / 60);
-        $remainingSeconds = $seconds % 60;
+        $cronometros = $cronometroRepository->findAll();
 
-        $formattedTime = '';
-
-        if ($hours > 0) {
-            $formattedTime .= $hours . ' Horas : ';
-        }
-        if ($minutes > 0) {
-            $formattedTime .= $minutes . ' Minutos : ';
-        }
-        if ($remainingSeconds > 0) {
-            $formattedTime .= $remainingSeconds;
+        // Sumar el tiempo total en segundos
+        $totalTime = 0;
+        foreach ($cronometros as $cronometro) {
+            $totalTime += $cronometro->getTime(); // Asumiendo que getTime() devuelve el tiempo en segundos
         }
 
-        return trim($formattedTime) . ' Segundos : ';
+        // Puedes dividir el tiempo total en partes (ejemplo: horas, minutos, segundos)
+        $totalHours = floor($totalTime / 3600);
+        $totalMinutes = floor(($totalTime % 3600) / 60);
+        $totalSeconds = $totalTime % 60;
+
+        return $this->render('cronometros/list.html.twig', [
+            'cronometros' => $cronometros,
+            'totalTime' => $totalTime, // Pasamos el tiempo total a la vista
+            'totalHours' => $totalHours,
+            'totalMinutes' => $totalMinutes,
+            'totalSeconds' => $totalSeconds,
+        ]);
     }
-    
 
 }
