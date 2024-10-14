@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Cronometro;
 use App\Entity\Tarea;
 use App\Form\TareaType;
+use App\Repository\CronometroRepository;
 use App\Repository\TareaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,11 +18,16 @@ use Symfony\Component\Routing\Attribute\Route;
 class TareaController extends AbstractController
 {
     #[Route('/', name: 'app_tarea_index', methods: ['GET'])]
-    public function index(TareaRepository $tareaRepository): Response
+    public function index(TareaRepository $tareaRepository, CronometroRepository $cronometroRepository): Response
     {
         $tareas = $tareaRepository->findAll();
     
         $ultimasTareas = $tareaRepository->findBy([], ['fecha' => 'DESC'], 5);
+        $cronometros = $cronometroRepository->findAll();
+
+        foreach ($cronometros as $cronometro) {
+            $cronometro->formattedTime = $this->formatTime($cronometro->getTime());
+        }
 
         //calcula tareas de la semana.
         $inicioSemana = new \DateTime('monday this week');
@@ -50,6 +57,7 @@ class TareaController extends AbstractController
             'ultimasTareas' => $ultimasTareas, // Enviamos las últimas 5 tareas
             'events' => json_encode($events), // Asegúrate de pasar los eventos a la vista
             'tareasSemana' => $tareasSemana,
+            'cronometros' => $cronometros,
         ]);
     }
     
@@ -123,23 +131,53 @@ class TareaController extends AbstractController
     }
 
     #[Route('/cronometro/finish', name: 'app_cronometro_finish', methods: ['POST'])]
-    public function finishCronometro(Request $request): JsonResponse
+    public function finishCronometro(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         // Obtener los datos enviados por AJAX en formato JSON
         $data = json_decode($request->getContent(), true);
-
+    
         // Verificar si el tiempo fue enviado
         if (isset($data['timeElapsed'])) {
             $timeElapsed = $data['timeElapsed']; // Tiempo en segundos
-
-            // Procesar el tiempo transcurrido según lo que necesites (puedes guardarlo en la base de datos, etc.)
-
+    
+            // Crear una nueva instancia de la entidad Cronometro
+            $cronometro = new Cronometro();
+            $cronometro->setTime($timeElapsed); // Establecer el tiempo
+            $cronometro->setDate(new \DateTime()); // Establecer la fecha actual
+    
+            // Guardar la entidad en la base de datos
+            $entityManager->persist($cronometro);
+            $entityManager->flush(); // Realizar la inserción en la base de datos
+    
             // Devolver una respuesta de éxito
             return new JsonResponse(['message' => 'Tiempo registrado correctamente', 'timeElapsed' => $timeElapsed]);
         }
-
+    
         // Si no se recibió el tiempo, devolver un error
         return new JsonResponse(['error' => 'No se envió tiempo'], 400);
     }
+
+    #funcion para formatear tiempo
+    private function formatTime(int $seconds): string
+    {
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        $remainingSeconds = $seconds % 60;
+
+        $formattedTime = '';
+
+        if ($hours > 0) {
+            $formattedTime .= $hours . ' : ';
+        }
+        if ($minutes > 0) {
+            $formattedTime .= $minutes . ' : ';
+        }
+        if ($remainingSeconds > 0) {
+            $formattedTime .= $remainingSeconds;
+        }
+
+        return trim($formattedTime);
+    }
+    
 
 }
