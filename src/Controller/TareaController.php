@@ -54,8 +54,8 @@ class TareaController extends AbstractController
     
         return $this->render('tarea/index.html.twig', [
             'tareas' => $tareas,
-            'ultimasTareas' => $ultimasTareas, // Enviamos las últimas 5 tareas
-            'events' => json_encode($events), // Asegúrate de pasar los eventos a la vista
+            'ultimasTareas' => $ultimasTareas, 
+            'events' => json_encode($events), 
             'tareasSemana' => $tareasSemana,
             'cronometros' => $cronometros,
         ]);
@@ -72,7 +72,7 @@ class TareaController extends AbstractController
         if ($fechaParam) {
             $fecha = \DateTime::createFromFormat('Y-m-d', $fechaParam);
             if ($fecha) {
-                $tarea->setFecha($fecha); // Establecer la fecha en la nueva tarea
+                $tarea->setFecha($fecha); 
             }
         }
     
@@ -167,10 +167,10 @@ class TareaController extends AbstractController
         $formattedTime = '';
 
         if ($hours > 0) {
-            $formattedTime .= $hours . ' : ';
+            $formattedTime .= $hours . ' Horas : ';
         }
         if ($minutes > 0) {
-            $formattedTime .= $minutes . ' : ';
+            $formattedTime .= $minutes . ' Minutos : ';
         }
         if ($remainingSeconds > 0) {
             $formattedTime .= $remainingSeconds;

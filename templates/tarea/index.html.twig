@@ -2,6 +2,19 @@
 
 {% block tituloPagina %} Tareas {% endblock %}
 
+{% block script %} 
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+{% endblock %}
+
 {% block contenidoIbox %}
 
     <a class="btn" style="margin-top: 10px; background-color: #C1CFA1; color: white;" href="{{ path('app_tarea_new') }}">Crear nueva tarea</a>
@@ -285,30 +298,46 @@
     updateDisplay(); 
 </script>
 
-<h1>Lista de Cronómetros</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tiempo</th>
-                <th>Fecha</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cronometro in cronometros %}
-                <tr>
-                    <td>{{ cronometro.id }}</td>
-                    <td>{{ cronometro.formattedTime }}</td>
-                    <td>{{ cronometro.date|date('Y-m-d H:i:s') }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="3">No hay cronómetros registrados.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
+
+<div class="container mt-4" style="margin-top:5%;">
+    <h1>Lista de Tiempos</h1>
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6">
+                <table id="cronometroTable" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Tiempo</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cronometro in cronometros %}
+                            <tr>
+                                <td>{{ cronometro.formattedTime }}</td>
+                                <td>{{ cronometro.date|date('d-m-Y') }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="2">No hay cronómetros registrados.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $(document).ready(function() {
+            $('#cronometroTable').DataTable({
+                paging: true, 
+                searching: true,
+                ordering: true, 
+            });
+        });
+    </script>
 
 {% endblock %}
