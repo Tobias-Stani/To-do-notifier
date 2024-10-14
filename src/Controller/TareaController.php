@@ -24,10 +24,14 @@ class TareaController extends AbstractController
     
         $ultimasTareas = $tareaRepository->findBy([], ['fecha' => 'DESC'], 5);
         $cronometros = $cronometroRepository->findAll();
+        $totalTimeInSeconds = 0;
 
         foreach ($cronometros as $cronometro) {
             $cronometro->formattedTime = $this->formatTime($cronometro->getTime());
+            $totalTimeInSeconds += $cronometro->getTime();
         }
+
+        $formattedTotalTime = $this->formatTime($totalTimeInSeconds);
 
         //calcula tareas de la semana.
         $inicioSemana = new \DateTime('monday this week');
@@ -58,6 +62,7 @@ class TareaController extends AbstractController
             'events' => json_encode($events), 
             'tareasSemana' => $tareasSemana,
             'cronometros' => $cronometros,
+            'totalTime' => $formattedTotalTime
         ]);
     }
     
@@ -176,7 +181,7 @@ class TareaController extends AbstractController
             $formattedTime .= $remainingSeconds;
         }
 
-        return trim($formattedTime);
+        return trim($formattedTime) . ' Segundos : ';
     }
     
 
