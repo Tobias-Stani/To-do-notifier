@@ -1,0 +1,39 @@
+{% extends 'extends/iboxContent.html.twig' %}
+
+{% block title %}Cuatrimestre index{% endblock %}
+
+{% block contenidoIbox %}
+    <h1>Cuatrimestre index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Numero</th>
+                <th>Anio</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cuatrimestre in cuatrimestres %}
+            <tr>
+                <td>{{ cuatrimestre.id }}</td>
+                <td>{{ cuatrimestre.numero }}</td>
+                <td>{{ cuatrimestre.Anio }}</td>
+                <td>Materias</td>
+                <td>
+                    <a href="{{ path('app_cuatrimestre_show', {'id': cuatrimestre.id}) }}">show</a>
+                    <a href="{{ path('app_cuatrimestre_edit', {'id': cuatrimestre.id}) }}">edit</a>
+                    <a href="{{ path('app_materia_index') }}">Materias</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_cuatrimestre_new') }}">Create new</a>
+{% endblock %}

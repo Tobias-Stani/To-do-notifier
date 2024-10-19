@@ -18,6 +18,9 @@ class Cuatrimestre
     #[ORM\Column]
     private ?int $numero = null;
 
+    #[ORM\Column]
+    private ?int $anio = null;  // Agregado el campo anio
+
     #[ORM\ManyToOne(inversedBy: 'cuatrimestre')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Carrera $carrera = null;
@@ -46,6 +49,18 @@ class Cuatrimestre
     public function setNumero(int $numero): static
     {
         $this->numero = $numero;
+
+        return $this;
+    }
+
+    public function getAnio(): ?int  // Getter para anio
+    {
+        return $this->anio;
+    }
+
+    public function setAnio(int $anio): static  // Setter para anio
+    {
+        $this->anio = $anio;
 
         return $this;
     }

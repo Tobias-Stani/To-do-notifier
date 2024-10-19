@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Materia{% endblock %}
+
+{% block body %}
+    <h1>Create new Materia</h1>
+
+    {{ include('materia/_form.html.twig') }}
+
+    <a href="{{ path('app_materia_index') }}">back to list</a>
+{% endblock %}

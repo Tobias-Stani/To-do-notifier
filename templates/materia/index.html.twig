@@ -1,0 +1,35 @@
+{% extends 'extends/iboxContent.html.twig' %}
+
+{% block tituloPagina %}Materias{% endblock %}
+
+{% block contenidoIbox %}
+    <h1>materias</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for materium in materias %}
+            <tr>
+                <td>{{ materium.id }}</td>
+                <td>{{ materium.nombre }}</td>
+                <td>
+                    <a href="{{ path('app_materia_show', {'id': materium.id}) }}">show</a>
+                    <a href="{{ path('app_materia_edit', {'id': materium.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_materia_new') }}">Create new</a>
+{% endblock %}

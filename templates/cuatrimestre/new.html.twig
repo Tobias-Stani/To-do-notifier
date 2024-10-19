@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Cuatrimestre{% endblock %}
+
+{% block body %}
+    <h1>Create new Cuatrimestre</h1>
+
+    {{ include('cuatrimestre/_form.html.twig') }}
+
+    <a href="{{ path('app_cuatrimestre_index') }}">back to list</a>
+{% endblock %}

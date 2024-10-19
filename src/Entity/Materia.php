@@ -18,7 +18,7 @@ class Materia
     #[ORM\Column(length: 255)]
     private ?string $nombre = null;
 
-    #[ORM\ManyToOne(inversedBy: 'materia')]
+    #[ORM\ManyToOne(inversedBy: 'materias')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Cuatrimestre $cuatrimestre = null;
 
@@ -27,9 +27,6 @@ class Materia
      */
     #[ORM\OneToMany(targetEntity: Cronometro::class, mappedBy: 'materia')]
     private Collection $cronometro;
-
-    #[ORM\ManyToOne(inversedBy: 'materias')]
-    private ?Tarea $tarea = null;
 
     public function __construct()
     {
@@ -91,18 +88,6 @@ class Materia
                 $cronometro->setMateria(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getTarea(): ?Tarea
-    {
-        return $this->tarea;
-    }
-
-    public function setTarea(?Tarea $tarea): static
-    {
-        $this->tarea = $tarea;
 
         return $this;
     }
