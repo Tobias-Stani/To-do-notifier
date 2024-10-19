@@ -20,6 +20,9 @@ class Cronometro
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
+    #[ORM\ManyToOne(inversedBy: 'cronometro')]
+    private ?Materia $materia = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +48,18 @@ class Cronometro
     public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getMateria(): ?Materia
+    {
+        return $this->materia;
+    }
+
+    public function setMateria(?Materia $materia): static
+    {
+        $this->materia = $materia;
 
         return $this;
     }

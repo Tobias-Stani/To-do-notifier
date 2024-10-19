@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TareaRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,6 +24,17 @@ class Tarea
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $fecha = null;
+
+    /**
+     * @var Collection<int, Materia>
+     */
+    #[ORM\OneToMany(targetEntity: Materia::class, mappedBy: 'tarea')]
+    private Collection $materias;
+
+    public function __construct()
+    {
+        $this->materias = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -60,6 +73,36 @@ class Tarea
     public function setFecha(\DateTimeInterface $fecha): static
     {
         $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Materia>
+     */
+    public function getMaterias(): Collection
+    {
+        return $this->materias;
+    }
+
+    public function addMateria(Materia $materia): static
+    {
+        if (!$this->materias->contains($materia)) {
+            $this->materias->add($materia);
+            $materia->setTarea($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMateria(Materia $materia): static
+    {
+        if ($this->materias->removeElement($materia)) {
+            // set the owning side to null (unless already changed)
+            if ($materia->getTarea() === $this) {
+                $materia->setTarea(null);
+            }
+        }
 
         return $this;
     }
