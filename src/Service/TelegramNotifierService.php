@@ -2,34 +2,28 @@
 
 namespace App\Service;
 
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Longman\TelegramBot\Telegram;
+use Longman\TelegramBot\Request;
 
-class TelegramNotifierService
+class TelegramBotService
 {
-    private $client;
-    private $telegramApiUrl;
-    private $botToken;
-    private $chatId;
+    private $telegram;
 
-    public function __construct(HttpClientInterface $client, string $botToken, string $chatId)
+    public function __construct(string $botToken, string $botUsername)
     {
-        $this->client = $client;
-        $this->botToken = $botToken;
-        $this->chatId = $chatId;
-        $this->telegramApiUrl = "https://api.telegram.org/bot{$this->botToken}/sendMessage";
+        // Inicializa el bot de Telegram con el token y nombre de usuario
+        $this->telegram = new Telegram($botToken, $botUsername);
     }
 
-    public function sendNotification(string $message): void
+    public function sendMessage(string $chatId, string $message)
     {
-        $response = $this->client->request('POST', $this->telegramApiUrl, [
-            'json' => [
-                'chat_id' => $this->chatId,
-                'text' => $message,
-            ]
-        ]);
+        // Configura el mensaje
+        $data = [
+            'chat_id' => $chatId,
+            'text'    => $message,
+        ];
 
-        if ($response->getStatusCode() !== 200) {
-            throw new \Exception('Error al enviar el mensaje a Telegram');
-        }
+        // Envía el mensaje usando la API de Telegram
+        return Request::sendMessage($data);
     }
 }
