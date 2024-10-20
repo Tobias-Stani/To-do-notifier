@@ -18,7 +18,9 @@ class MateriaType extends AbstractType
             ->add('nombre')
             ->add('cuatrimestre', EntityType::class, [
                 'class' => Cuatrimestre::class,
-                'choice_label' => 'id',
+                'choice_label' => function (Cuatrimestre $cuatrimestre) {
+                    return $cuatrimestre->getNumero() . ' / ' . $cuatrimestre->getAnio();
+                },
             ])
         ;
     }

@@ -18,7 +18,7 @@ class CuatrimestreType extends AbstractType
             ->add('anio')
             ->add('carrera', EntityType::class, [
                 'class' => Carrera::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nombre',
             ])
         ;
     }
