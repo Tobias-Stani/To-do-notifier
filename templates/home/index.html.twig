@@ -5,12 +5,205 @@
 {% endblock %}
 
 {% block contenido %}
+    <style>
+        /* Estilos base */
+        .staggered-list {
+            position: relative;
+            padding: 20px 0;
+            width: 100%;
+        }
+
+        .staggered-item {
+            margin-bottom: 20px; /* Cambiado de -60px para mejor visualización móvil */
+            transition: transform 0.3s ease;
+            position: relative;
+            width: 100%;
+        }
+
+        .staggered-content {
+            margin-left: 20px; /* Reducido para móviles */
+            margin-right: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-left: 5px solid #0d6efd;
+        }
+
+        .cuatrimestre-list {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .cuatrimestre-item {
+            margin: 10px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            transition: transform 0.2s ease;
+        }
+
+        .carrera-header {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .action-buttons {
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            flex: 1;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .btn-create-carrera {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-create-cuatrimestre {
+            background: #198754;
+            color: white;
+        }
+
+        .btn-create-carrera:hover, .btn-create-cuatrimestre:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Ajustes responsive para los botones dentro de cuatrimestre-item */
+        .btn-group {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .staggered-content {
+                margin-left: 10px;
+                margin-right: 10px;
+                padding: 10px;
+            }
+
+            .carrera-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .cuatrimestre-item {
+                padding: 10px;
+            }
+
+            .cuatrimestre-item > div {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch !important;
+            }
+
+            .btn-group {
+                justify-content: center;
+            }
+
+            .staggered-item:hover {
+                transform: none;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                position: relative;
+                top: 0;
+            }
+
+            .action-button {
+                width: 100%;
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            h4 {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .carrera-header .btn {
+                width: 100%;
+            }
+        }
+
+        /* Mejoras de accesibilidad */
+        @media (hover: hover) {
+            .staggered-item:hover {
+                transform: translateX(20px);
+                z-index: 10;
+            }
+
+            .cuatrimestre-item:hover {
+                transform: translateX(10px);
+                background: #f1f3f5;
+            }
+        }
+
+        /* Mejoras de rendimiento */
+        @media (prefers-reduced-motion: reduce) {
+            .staggered-item,
+            .cuatrimestre-item,
+            .action-button {
+                transition: none;
+            }
+        }
+    </style>
+
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-content text-center p-md">
                     <h2>
-                        <span class="text-navy"> APLICACION PARA LA UNIVERSIDAD </span>
+                        <span class="text-navy">APLICACION PARA LA UNIVERSIDAD</span>
                     </h2>
                     <p>
                         Guarda tareas, recordatorios etc.
@@ -20,51 +213,57 @@
         </div>
     </div>
 
-<h1>Mis Carreras</h1>
+    <div class="container py-4">
+        <h1 class="mb-4">Mis Carreras</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nombre de la Carrera</th>
-                <th>Acciones</th>
-                <th>Cuatrimestres</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for carrera in carreras %}
-            <tr>
-                <td>{{ carrera.nombre }}</td>
-                <td>
-                    <a href="{{ path('app_carrera_show', {'id': carrera.id}) }}">Ver Carrera</a>
-                    <a href="{{ path('app_carrera_edit', {'id': carrera.id}) }}">Editar Carrera</a>
-                </td>
-                <td>
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+            <a href="{{ path('app_carrera_new') }}" class="action-button btn-create-carrera">
+                <i class="bi bi-plus-circle me-2"></i>Crear Carrera
+            </a>
+            <a href="{{ path('app_cuatrimestre_new') }}" class="action-button btn-create-cuatrimestre">
+                <i class="bi bi-plus-square me-2"></i>Nuevo Cuatrimestre
+            </a>
+        </div>
+
+        <div class="staggered-list">
+            {% for carrera in carreras %}
+            <div class="staggered-item">
+                <div class="staggered-content">
+                    <div class="carrera-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">{{ carrera.nombre }}</h4>
+                        <a href="{{ path('app_carrera_show', {'id': carrera.id}) }}" 
+                           class="btn btn-primary btn-sm">Ver Carrera</a>
+                    </div>
+
                     {% if carrera.cuatrimestres is not empty %}
-                        <ul>
+                    <ul class="cuatrimestre-list">
                         {% for cuatrimestre in carrera.cuatrimestres %}
-                            <li>
-                                Cuatrimestre {{ cuatrimestre.numero }} - Año: {{ cuatrimestre.anio }}
-                                <a href="{{ path('app_cuatrimestre_show', {'id': cuatrimestre.id}) }}">Ver</a> |
-                                <a href="{{ path('app_cuatrimestre_edit', {'id': cuatrimestre.id}) }}">Editar</a> |
-                                <a href="{{ path('app_materia_index', {'cuatrimestre_id': cuatrimestre.id}) }}">Ver Materias</a>
-                            </li>
+                        <li class="cuatrimestre-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">
+                                    Cuatrimestre {{ cuatrimestre.numero }} - Año: {{ cuatrimestre.anio }}
+                                </span>
+                                <div class="btn-group">
+                                    <a href="{{ path('app_cuatrimestre_show', {'id': cuatrimestre.id}) }}" 
+                                       class="btn btn-info btn-sm">Ver</a>
+                                    <a href="{{ path('app_materia_index', {'cuatrimestre_id': cuatrimestre.id}) }}" 
+                                       class="btn btn-success btn-sm">Ver Materias</a>
+                                </div>
+                            </div>
+                        </li>
                         {% endfor %}
-                        </ul>
+                    </ul>
                     {% else %}
-                        <p>No hay cuatrimestres asociados.</p>
+                    <p class="empty-message">No hay cuatrimestres asociados.</p>
                     {% endif %}
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">No se encontraron carreras.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    
-    <a href="{{ path('app_carrera_new') }}">Crear carrera</a>
-    <a href="{{ path('app_cuatrimestre_new') }}">Nuevo Cuatrimestre</a>
-
-
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No se encontraron carreras.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
