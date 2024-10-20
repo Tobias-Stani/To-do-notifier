@@ -10,13 +10,61 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-content text-center p-md">
                     <h2>
-                        <span class="text-navy"> Historial de Partidos </span>
+                        <span class="text-navy"> APLICACION PARA LA UNIVERSIDAD </span>
                     </h2>
                     <p>
-                        Aplicacion para registrar y tener el historial de partidos a los que asististe.
+                        Guarda tareas, recordatorios etc.
                     </p>
                 </div>
             </div>
         </div>
     </div>
+
+<h1>Mis Carreras</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre de la Carrera</th>
+                <th>Acciones</th>
+                <th>Cuatrimestres</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for carrera in carreras %}
+            <tr>
+                <td>{{ carrera.nombre }}</td>
+                <td>
+                    <a href="{{ path('app_carrera_show', {'id': carrera.id}) }}">Ver Carrera</a>
+                    <a href="{{ path('app_carrera_edit', {'id': carrera.id}) }}">Editar Carrera</a>
+                </td>
+                <td>
+                    {% if carrera.cuatrimestres is not empty %}
+                        <ul>
+                        {% for cuatrimestre in carrera.cuatrimestres %}
+                            <li>
+                                Cuatrimestre {{ cuatrimestre.numero }} - Año: {{ cuatrimestre.anio }}
+                                <a href="{{ path('app_cuatrimestre_show', {'id': cuatrimestre.id}) }}">Ver</a> |
+                                <a href="{{ path('app_cuatrimestre_edit', {'id': cuatrimestre.id}) }}">Editar</a> |
+                                <a href="{{ path('app_materia_index', {'cuatrimestre_id': cuatrimestre.id}) }}">Ver Materias</a>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No hay cuatrimestres asociados.</p>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">No se encontraron carreras.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    
+    <a href="{{ path('app_carrera_new') }}">Crear carrera</a>
+    <a href="{{ path('app_cuatrimestre_new') }}">Nuevo Cuatrimestre</a>
+
+
 {% endblock %}

@@ -22,11 +22,11 @@ class Carrera
      * @var Collection<int, Cuatrimestre>
      */
     #[ORM\OneToMany(targetEntity: Cuatrimestre::class, mappedBy: 'carrera', orphanRemoval: true)]
-    private Collection $cuatrimestre;
+    private Collection $cuatrimestres;
 
     public function __construct()
     {
-        $this->cuatrimestre = new ArrayCollection();
+        $this->cuatrimestres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -42,22 +42,21 @@ class Carrera
     public function setNombre(string $nombre): static
     {
         $this->nombre = $nombre;
-
         return $this;
     }
 
     /**
      * @return Collection<int, Cuatrimestre>
      */
-    public function getCuatrimestre(): Collection
+    public function getCuatrimestres(): Collection // Cambio aquí: cuatrimestres (plural)
     {
-        return $this->cuatrimestre;
+        return $this->cuatrimestres;
     }
 
     public function addCuatrimestre(Cuatrimestre $cuatrimestre): static
     {
-        if (!$this->cuatrimestre->contains($cuatrimestre)) {
-            $this->cuatrimestre->add($cuatrimestre);
+        if (!$this->cuatrimestres->contains($cuatrimestre)) {
+            $this->cuatrimestres->add($cuatrimestre);
             $cuatrimestre->setCarrera($this);
         }
 
@@ -66,8 +65,7 @@ class Carrera
 
     public function removeCuatrimestre(Cuatrimestre $cuatrimestre): static
     {
-        if ($this->cuatrimestre->removeElement($cuatrimestre)) {
-            // set the owning side to null (unless already changed)
+        if ($this->cuatrimestres->removeElement($cuatrimestre)) {
             if ($cuatrimestre->getCarrera() === $this) {
                 $cuatrimestre->setCarrera(null);
             }
