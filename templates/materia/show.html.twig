@@ -2,25 +2,85 @@
 
 {% block title %}Materia{% endblock %}
 
+{% block script %} 
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+{% endblock %}
+
 {% block contenidoIbox %}
-    <h1>Materia</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ materium.id }}</td>
-            </tr>
-            <tr>
-                <th>Nombre</th>
-                <td>{{ materium.nombre }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <style>
+    
+        /* Personalizar los títulos del calendario */
+        .fc-toolbar-title {
+            font-size: 1rem; 
+            font-weight: bold;
+        }
+    
+        .fc-event {
+            background-color: #EDE8DC !important; 
+            border: none !important; 
+            color: #ffffff !important; 
+            font-weight: bold; 
+            padding: 5px; 
+            border-radius: 5px; 
+        }
+    
+        .fc-daygrid-day:hover {
+            background-color: #EAD8B1 !important; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease;
+        }
+    </style>
 
-    <a href="{{ path('app_materia_index') }}">back to list</a>
+    <h1>Materia: {{materium.nombre}}</h1>
 
-    <a href="{{ path('app_materia_edit', {'id': materium.id}) }}">edit</a>
+    <a class="btn" style="margin-top: 10px; background-color: #C1CFA1; color: white;" href="{{ path('app_tarea_new') }}">Crear nueva tarea</a>
 
-    {{ include('materia/_delete_form.html.twig') }}
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <div id="calendar"></div>
+    </div>
+
+
+    
+
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.css" rel="stylesheet">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var events = {{ events|raw }};
+
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: events,
+                editable: true,
+
+                dateClick: function(info) {
+                    window.location.href = "{{ path('app_tarea_new') }}?fecha=" + info.dateStr;
+                },
+
+                eventClick: function(info) {
+                    alert('Tarea: ' + info.event.title);
+                }
+            });
+            calendar.render();
+        });
+    </script>
+
+        <a href="{{ path('app_materia_index') }}">back to list</a>
+
+        <a href="{{ path('app_materia_edit', {'id': materium.id}) }}">edit</a>
+
+        {{ include('materia/_delete_form.html.twig') }}
 {% endblock %}

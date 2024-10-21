@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Materia;
 use App\Form\MateriaType;
+use App\Repository\CronometroRepository;
 use App\Repository\MateriaRepository;
+use App\Repository\TareaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,10 +45,22 @@ class MateriaController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_materia_show', methods: ['GET'])]
-    public function show(Materia $materium): Response
+    public function show(Materia $materium, TareaRepository $tareaRepository, CronometroRepository $cronometroRepository): Response
     {
+        $tareas = $tareaRepository->findAll();
+        
+        $events = [];
+        foreach ($tareas as $tarea) {
+            $events[] = [
+                'id' => $tarea->getId(),
+                'title' => $tarea->getTitulo(),
+                'start' => $tarea->getFecha()->format('Y-m-d'),
+            ];
+        }
+
         return $this->render('materia/show.html.twig', [
             'materium' => $materium,
+            'events' => json_encode($events), 
         ]);
     }
 
