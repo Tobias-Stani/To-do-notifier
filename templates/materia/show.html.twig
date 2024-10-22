@@ -39,6 +39,148 @@
             cursor: pointer; 
             transition: background-color 0.3s ease;
         }
+
+        .timer-container {
+            background: linear-gradient(145deg, #f3f4f6, #ffffff);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 20px 20px 60px #d1d1d1, -20px -20px 60px #ffffff;
+            max-width: 400px;
+            margin: 2rem auto;
+        }
+
+        .timer-display {
+            background: #2d3436;
+            color: #00ff95;
+            font-family: 'Courier New', monospace;
+            font-size: 3.5rem;
+            font-weight: bold;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px rgba(0, 255, 149, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .timer-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .timer-button {
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-button {
+            background: #00b894;
+            color: white;
+        }
+
+        .start-button:hover {
+            background: #00a884;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+        }
+
+        .stop-button {
+            background: #ff7675;
+            color: white;
+        }
+
+        .stop-button:hover {
+            background: #ff6b6b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 118, 117, 0.3);
+        }
+
+        .reset-button {
+            background: #0984e3;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .reset-button:hover {
+            background: #0878d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.3);
+        }
+
+        .timer-laps {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .lap-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+            font-family: 'Courier New', monospace;
+        }
+
+        .lap-item:last-child {
+            border-bottom: none;
+        }
+
+        .lap-number {
+            color: #6c757d;
+            font-weight: bold;
+        }
+
+        .lap-time {
+            color: #2d3436;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .timer-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            .timer-display {
+                font-size: 2.5rem;
+                padding: 1rem;
+            }
+
+            .timer-controls {
+                gap: 0.5rem;
+            }
+
+            .timer-button {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .timer-running .timer-display {
+            animation: pulse 1s infinite;
+        }
+
+        .timer-button:active {
+            transform: scale(0.95);
+        }
     </style>
 
     <h1>Materia: {{materium.nombre}}</h1>
@@ -49,9 +191,36 @@
         <div id="calendar"></div>
     </div>
 
+    <div class="container">
+        <div class="timer-container" id="timerContainer">
+            <!-- Display del cronómetro -->
+            <div class="timer-display" id="display">
+                00:00:00
+            </div>
 
-    
+            <!-- Controles -->
+            <div class="timer-controls">
+                <button class="timer-button start-button" id="startBtn">
+                    Iniciar
+                </button>
+                <button class="timer-button stop-button" id="stopBtn">
+                    Detener
+                </button>
+                <button class="timer-button reset-button" id="resetBtn">
+                    Reiniciar
+                </button>
+            </div>
 
+            <!-- Vueltas/Laps -->
+            <div class="timer-laps">
+                <div class="lap-item">
+                    <span class="lap-number">#1</span>
+                    <span class="lap-time">00:00:00</span>
+                </div>
+                <!-- Las vueltas se agregarán dinámicamente aquí -->
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.css" rel="stylesheet">
@@ -78,9 +247,83 @@
         });
     </script>
 
-        <a href="{{ path('app_materia_index') }}">back to list</a>
+    <!-- Cronometro -->
+    <script>
+        let timerInterval;
+        let running = false;
+        let startTime;
+        let elapsedTime = 0;
+        let laps = [];
 
-        <a href="{{ path('app_materia_edit', {'id': materium.id}) }}">edit</a>
+        const display = document.getElementById('display');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const timerContainer = document.getElementById('timerContainer');
 
-        {{ include('materia/_delete_form.html.twig') }}
+        function formatTime(ms) {
+            const date = new Date(ms);
+            return date.toISOString().substr(11, 8);
+        }
+
+        startBtn.addEventListener('click', () => {
+            if (!running) {
+                running = true;
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(updateDisplay, 10);
+                timerContainer.classList.add('timer-running');
+                startBtn.textContent = 'Pausar';
+            } else {
+                clearInterval(timerInterval);
+                running = false;
+                timerContainer.classList.remove('timer-running');
+                startBtn.textContent = 'Reanudar';
+            }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            if (running) {
+                clearInterval(timerInterval);
+                running = false;
+                addLap();
+                timerContainer.classList.remove('timer-running');
+                startBtn.textContent = 'Iniciar';
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+            running = false;
+            elapsedTime = 0;
+            display.textContent = '00:00:00';
+            laps = [];
+            updateLaps();
+            timerContainer.classList.remove('timer-running');
+            startBtn.textContent = 'Iniciar';
+        });
+
+        function updateDisplay() {
+            elapsedTime = Date.now() - startTime;
+            display.textContent = formatTime(elapsedTime);
+        }
+
+        function addLap() {
+            laps.push(elapsedTime);
+            updateLaps();
+        }
+
+        function updateLaps() {
+            const lapsContainer = document.querySelector('.timer-laps');
+            lapsContainer.innerHTML = laps.map((lap, index) => `
+                <div class="lap-item">
+                    <span class="lap-number">#${index + 1}</span>
+                    <span class="lap-time">${formatTime(lap)}</span>
+                </div>
+            `).join('');
+        }
+    </script>
+
+    <a href="{{ path('app_materia_index') }}">back to list</a>
+    <a href="{{ path('app_materia_edit', {'id': materium.id}) }}">edit</a>
+    {{ include('materia/_delete_form.html.twig') }}
 {% endblock %}
