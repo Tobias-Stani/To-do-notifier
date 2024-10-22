@@ -30,8 +30,7 @@
 		{% endblock %}
 	</head>
 
-	<body>
-
+	<body class="mini-navbar">
 		{% block javascripts %}
 			<!-- Cargar jQuery primero (desde el CDN, puedes elegir el local si prefieres) -->
 			<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -68,9 +67,15 @@
 			<!-- Cargar funciones locales al final, después de jQuery y plugins -->
 			<script src="{{ asset('js/funciones.js') }}"></script>
 			<script src="{{ asset('build/app.js') }}"></script>
+
+			<!-- Script para asegurar que el menú esté colapsado al cargar -->
+			<script>
+				$(document).ready(function() {
+					$("body").addClass("mini-navbar");
+				});
+			</script>
 		{% endblock %}
 	
-
 		{% block body %}
 			<div id="wrapper">
 				{% block menu %}

@@ -1,65 +1,150 @@
 {% extends 'extends/iboxContent.html.twig' %}
 
-{% block title %}Materia{% endblock %}
+{% block title %}{{ materium.nombre }}{% endblock %}
 
-{% block script %} 
-
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
-
-    <!-- jQuery -->
+{% block script %}
+    <!-- Modern UI Dependencies -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-
 {% endblock %}
 
 {% block contenidoIbox %}
-
     <style>
-        /* Personalizar los títulos del calendario */
-        .fc-toolbar-title {
-            font-size: 1rem; 
-            font-weight: bold;
-        }
-    
-        .fc-event {
-            background-color: #EDE8DC !important; 
-            border: none !important; 
-            color: #ffffff !important; 
-            font-weight: bold; 
-            padding: 5px; 
-            border-radius: 5px; 
-        }
-    
-        .fc-daygrid-day:hover {
-            background-color: #EAD8B1 !important; 
-            cursor: pointer; 
-            transition: background-color 0.3s ease;
+        :root {
+            --primary-color: #34495e;         /* Azul oscuro */
+            --secondary-color: #3498db;       /* Azul claro */
+            --accent-color: #2ecc71;          /* Verde */
+            --dark-color: #2c3e50;            /* Azul muy oscuro */
+            --light-color: #ecf0f1;           /* Gris muy claro */
+            --danger-color: #e74c3c;          /* Rojo */
+            --text-color: #2c3e50;            /* Color texto principal */
+            --text-light: #7f8c8d;            /* Color texto secundario */
+            --shadow-color: rgba(0, 0, 0, 0.1);
         }
 
-        .timer-container {
-            background: linear-gradient(145deg, #f3f4f6, #ffffff);
-            border-radius: 20px;
+        /* Layout & Container Styles */
+        .page-container {
             padding: 2rem;
-            box-shadow: 20px 20px 60px #d1d1d1, -20px -20px 60px #ffffff;
-            max-width: 400px;
-            margin: 2rem auto;
+            background-color: var(--light-color);
+        }
+
+        .two-column-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .section-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            height: fit-content;
+        }
+
+        /* Header Styles */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* Button Styles */
+        .custom-button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .custom-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-color);
+            background-color: var(--primary-color);
+        }
+
+        /* Calendar Styles */
+        .calendar-container {
+            height: 100%;
+        }
+
+        .fc-toolbar-title {
+            font-size: 1.2rem !important;
+            font-weight: 600 !important;
+            color: var(--primary-color) !important;
+        }
+
+        .fc-event {
+            background-color: var(--secondary-color) !important;
+            border: none !important;
+            padding: 0.5rem !important;
+            border-radius: 6px !important;
+            box-shadow: 0 2px 4px var(--shadow-color) !important;
+        }
+
+        .fc-daygrid-day:hover {
+            background-color: var(--light-color) !important;
+            cursor: pointer;
+        }
+
+        .fc-button-primary {
+            background-color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+        }
+
+        .fc-button-primary:hover {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        /* Timer Styles */
+        .timer-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            height: 100%;
+        }
+
+        .timer-section-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
         }
 
         .timer-display {
-            background: #2d3436;
-            color: #00ff96;
+            background: var(--dark-color);
+            color: var(--accent-color);
             font-family: 'Courier New', monospace;
-            font-size: 3.5rem;
-            font-weight: bold;
+            font-size: 3rem;
             padding: 1.5rem;
-            border-radius: 15px;
+            border-radius: 12px;
             text-align: center;
             margin-bottom: 1.5rem;
-            text-shadow: 0 0 10px rgba(0, 255, 149, 0.5);
-            letter-spacing: 2px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .timer-controls {
@@ -70,118 +155,58 @@
         }
 
         .timer-button {
-            border: none;
             padding: 1rem;
-            border-radius: 10px;
-            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            color: white;
         }
 
         .start-button {
-            background: #00b894;
-            color: white;
-        }
-
-        .start-button:hover {
-            background: #00a884;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+            background: var(--accent-color);
         }
 
         .stop-button {
-            background: #ff7675;
-            color: white;
-        }
-
-        .stop-button:hover {
-            background: #ff6b6b;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 118, 117, 0.3);
+            background: var(--danger-color);
         }
 
         .reset-button {
-            background: #0984e3;
-            color: white;
+            background: var(--secondary-color);
             grid-column: span 2;
         }
 
-        .reset-button:hover {
-            background: #0878d3;
+        .timer-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.3);
+            box-shadow: 0 4px 12px var(--shadow-color);
+            opacity: 0.9;
         }
 
         .timer-laps {
-            background: #f8f9fa;
-            border-radius: 10px;
+            background: var(--light-color);
+            border-radius: 8px;
             padding: 1rem;
             max-height: 200px;
             overflow-y: auto;
         }
-        
-        .timer-running .timer-display {
-            background-color: #2d412c;
-            animation: pulse 1s infinite;
-        }
-
 
         .lap-item {
             display: flex;
             justify-content: space-between;
-            padding: 0.5rem;
+            padding: 0.8rem;
             border-bottom: 1px solid #dee2e6;
             font-family: 'Courier New', monospace;
+            animation: fadeIn 0.3s ease;
         }
 
-        .lap-item:last-child {
-            border-bottom: none;
-        }
-
-        .lap-number {
-            color: #6c757d;
-            font-weight: bold;
-        }
-
-        .lap-time {
-            color: #2d3436;
-        }
-
-        .lap-item {
-            animation: fadeIn 0.5s ease;
-        }
-
+        /* Animations */
         @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsive design */
-        @media (max-width: 480px) {
-            .timer-container {
-                margin: 1rem;
-                padding: 1rem;
-            }
-
-            .timer-display {
-                font-size: 2.5rem;
-                padding: 1rem;
-            }
-
-            .timer-controls {
-                gap: 0.5rem;
-            }
-
-            .timer-button {
-                padding: 0.8rem;
-                font-size: 0.9rem;
-            }
-        }
-
-        /* Animaciones */
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.02); }
@@ -192,77 +217,130 @@
             animation: pulse 1s infinite;
         }
 
-        .timer-button:active {
-            transform: scale(0.95);
+        /* Navigation Links */
+        .navigation-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .two-column-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .timer-container {
+                margin-top: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                padding: 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+                padding: 1rem;
+            }
+
+            .timer-display {
+                font-size: 2.5rem;
+            }
         }
     </style>
 
-    <h1 style="font-weight: bold;">Materia: {{materium.nombre}}</h1>
+    <div class="page-container">
+        <!-- Header Section -->
+        <div class="page-header">
+            <h1 class="page-title">{{ materium.nombre }}</h1>
+            <a href="{{ path('app_tarea_new') }}" class="custom-button">
+                <i class="fas fa-plus"></i> Nueva tarea
+            </a>
+        </div>
 
-    <a class="btn" style="margin-top: 10px; background-color: #C1CFA1; color: white;" href="{{ path('app_tarea_new') }}">Crear nueva tarea</a>
-
-    <div style="max-width: 750px; margin: 0 auto;">
-        <div id="calendar"></div>
-    </div>
-
-    <div class="container" style="max-width: 750px; margin: 0 auto; margin-top: 10%;">
-        <h1 style="font-weight: bold;">Tiempos de estudio</h1>
-        <div class="timer-container" id="timerContainer">
-            <!-- Display del cronómetro -->
-            <div class="timer-display" id="display">
-                00:00:00
+        <!-- Two Column Layout -->
+        <div class="two-column-layout">
+            <!-- Calendar Column -->
+            <div class="section-container">
+                <div class="calendar-container" id="calendar"></div>
             </div>
 
-            <!-- Controles -->
-            <div class="timer-controls">
-                <button class="timer-button start-button" id="startBtn">
-                    <i class="fa fa-play"></i> Iniciar
-                </button>
-                <button class="timer-button stop-button" id="stopBtn">
-                    <i class="fa fa-pause"></i> Detener
-                </button>
-                <button class="timer-button reset-button" id="resetBtn">
-                    <i class="fa fa-refresh"></i> Reiniciar
-                </button>    
-            </div>
+            <!-- Timer Column -->
+            <div class="section-container">
+                <h2 class="timer-section-title">Tiempos de estudio</h2>
+                <div class="timer-container" id="timerContainer">
+                    <div class="timer-display" id="display">00:00:00</div>
+                    
+                    <div class="timer-controls">
+                        <button class="timer-button start-button" id="startBtn">
+                            <i class="fas fa-play"></i> Iniciar
+                        </button>
+                        <button class="timer-button stop-button" id="stopBtn">
+                            <i class="fas fa-pause"></i> Detener
+                        </button>
+                        <button class="timer-button reset-button" id="resetBtn">
+                            <i class="fas fa-redo"></i> Reiniciar
+                        </button>
+                    </div>
 
-            <!-- Vueltas/Laps -->
-            <div class="timer-laps">
-                <div class="lap-item">
-                    <span class="lap-number">#1</span>
-                    <span class="lap-time">00:00:00</span>
+                    <div class="timer-laps">
+                        <!-- Laps will be added here dynamically -->
+                    </div>
                 </div>
-                <!-- Las vueltas se agregarán dinámicamente aquí -->
             </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="navigation-links">
+            <a href="{{ path('app_materia_index') }}" class="custom-button">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <a href="{{ path('app_materia_edit', {'id': materium.id}) }}" class="custom-button">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            {{ include('materia/_delete_form.html.twig') }}
         </div>
     </div>
 
+    <!-- Calendar Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.css" rel="stylesheet">
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var events = {{ events|raw }};
-
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 events: events,
                 editable: true,
-
+                height: 'auto',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
                 dateClick: function(info) {
                     window.location.href = "{{ path('app_tarea_new') }}?fecha=" + info.dateStr;
                 },
-
                 eventClick: function(info) {
-                    alert('Tarea: ' + info.event.title);
+                    // Mejorar la visualización del evento
+                    Swal.fire({
+                        title: info.event.title,
+                        text: info.event.extendedProps.description || 'Sin descripción',
+                        icon: 'info'
+                    });
                 }
             });
             calendar.render();
         });
     </script>
 
-    <!-- Cronometro -->
+    <!-- Timer Script -->
     <script>
         let timerInterval;
         let running = false;
@@ -287,12 +365,12 @@
                 startTime = Date.now() - elapsedTime;
                 timerInterval = setInterval(updateDisplay, 10);
                 timerContainer.classList.add('timer-running');
-                startBtn.textContent = 'Pausar';
+                startBtn.innerHTML = '<i class="fas fa-pause"></i> Pausar';
             } else {
                 clearInterval(timerInterval);
                 running = false;
                 timerContainer.classList.remove('timer-running');
-                startBtn.textContent = 'Reanudar';
+                startBtn.innerHTML = '<i class="fas fa-play"></i> Reanudar';
             }
         });
 
@@ -302,7 +380,7 @@
                 running = false;
                 addLap();
                 timerContainer.classList.remove('timer-running');
-                startBtn.textContent = 'Iniciar';
+                startBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar';
             }
         });
 
@@ -314,7 +392,7 @@
             laps = [];
             updateLaps();
             timerContainer.classList.remove('timer-running');
-            startBtn.textContent = 'Iniciar';
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar';
         });
 
         function updateDisplay() {
@@ -337,8 +415,4 @@
             `).join('');
         }
     </script>
-
-    <a href="{{ path('app_materia_index') }}">back to list</a>
-    <a href="{{ path('app_materia_edit', {'id': materium.id}) }}">edit</a>
-    {{ include('materia/_delete_form.html.twig') }}
 {% endblock %}
