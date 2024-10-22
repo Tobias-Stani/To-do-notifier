@@ -18,7 +18,6 @@
 {% block contenidoIbox %}
 
     <style>
-    
         /* Personalizar los títulos del calendario */
         .fc-toolbar-title {
             font-size: 1rem; 
@@ -51,7 +50,7 @@
 
         .timer-display {
             background: #2d3436;
-            color: #00ff95;
+            color: #00ff96;
             font-family: 'Courier New', monospace;
             font-size: 3.5rem;
             font-weight: bold;
@@ -123,6 +122,12 @@
             max-height: 200px;
             overflow-y: auto;
         }
+        
+        .timer-running .timer-display {
+            background-color: #2d412c;
+            animation: pulse 1s infinite;
+        }
+
 
         .lap-item {
             display: flex;
@@ -143,6 +148,15 @@
 
         .lap-time {
             color: #2d3436;
+        }
+
+        .lap-item {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         /* Responsive design */
@@ -183,15 +197,16 @@
         }
     </style>
 
-    <h1>Materia: {{materium.nombre}}</h1>
+    <h1 style="font-weight: bold;">Materia: {{materium.nombre}}</h1>
 
     <a class="btn" style="margin-top: 10px; background-color: #C1CFA1; color: white;" href="{{ path('app_tarea_new') }}">Crear nueva tarea</a>
 
-    <div style="max-width: 1200px; margin: 0 auto;">
+    <div style="max-width: 750px; margin: 0 auto;">
         <div id="calendar"></div>
     </div>
 
-    <div class="container">
+    <div class="container" style="max-width: 750px; margin: 0 auto; margin-top: 10%;">
+        <h1 style="font-weight: bold;">Tiempos de estudio</h1>
         <div class="timer-container" id="timerContainer">
             <!-- Display del cronómetro -->
             <div class="timer-display" id="display">
@@ -201,14 +216,14 @@
             <!-- Controles -->
             <div class="timer-controls">
                 <button class="timer-button start-button" id="startBtn">
-                    Iniciar
+                    <i class="fa fa-play"></i> Iniciar
                 </button>
                 <button class="timer-button stop-button" id="stopBtn">
-                    Detener
+                    <i class="fa fa-pause"></i> Detener
                 </button>
                 <button class="timer-button reset-button" id="resetBtn">
-                    Reiniciar
-                </button>
+                    <i class="fa fa-refresh"></i> Reiniciar
+                </button>    
             </div>
 
             <!-- Vueltas/Laps -->
