@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Carrera;
 use App\Entity\Cuatrimestre;
 use App\Entity\Materia;
 use App\Entity\Tarea;
@@ -19,7 +20,10 @@ class MateriaType extends AbstractType
             ->add('cuatrimestre', EntityType::class, [
                 'class' => Cuatrimestre::class,
                 'choice_label' => function (Cuatrimestre $cuatrimestre) {
-                    return $cuatrimestre->getNumero() . ' / ' . $cuatrimestre->getAnio();
+                    $carrera = $cuatrimestre->getCarrera(); 
+                    
+                    return $cuatrimestre->getNumero() . ' / ' . $cuatrimestre->getAnio() . 
+                           ' (' . $carrera->getNombre() . ')'; 
                 },
             ])
         ;

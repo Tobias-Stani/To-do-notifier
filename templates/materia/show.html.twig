@@ -10,6 +10,16 @@
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 {% endblock %}
 
+{% macro format_time(ms) %}
+    {% set seconds = ms / 1000 %}
+    {% set minutes = seconds / 60 %}
+    {% set hours = minutes / 60 %}
+    {% set display_seconds = seconds % 60 %}
+    {% set display_minutes = minutes % 60 %}
+    {% set display_hours = hours % 24 %}
+    {{ '%02d:%02d:%02d'|format(display_hours, display_minutes, display_seconds) }}
+{% endmacro %}
+
 {% block contenidoIbox %}
     <style>
         :root {
@@ -251,6 +261,153 @@
                 font-size: 2.5rem;
             }
         }
+
+            /* ... tiempos de la bd ... */
+
+    .timer-history {
+        margin-top: 2rem;
+        background: var(--light-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+    .timer-history-title {
+        font-size: 1.2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-light);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--secondary-color);
+        opacity: 0.5;
+    }
+
+    .empty-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.7;
+    }
+
+    .timer-table-container {
+        overflow-x: auto;
+    }
+
+    .timer-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.5rem;
+    }
+
+    .timer-table th {
+        color: var(--text-light);
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-size: 0.9rem;
+    }
+
+    .timer-table th i {
+        margin-right: 0.5rem;
+    }
+
+    .timer-entry {
+        background: white;
+        border-radius: 8px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .timer-entry:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .timer-entry td {
+        padding: 1rem;
+    }
+
+    .time-badge {
+        background: var(--secondary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+    }
+
+    .timer-date {
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+
+    .timer-progress {
+        width: 30%;
+    }
+
+    .progress-bar {
+        height: 8px;
+        background: var(--light-color);
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .progress-bar::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: var(--progress);
+        background: var(--accent-color);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .view-all-container {
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .view-all-button {
+        background: none;
+        border: none;
+        color: var(--secondary-color);
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+    }
+
+    .view-all-button:hover {
+        color: var(--primary-color);
+        transform: translateX(4px);
+    }
+
+    @media (max-width: 768px) {
+        .timer-history {
+            padding: 1rem;
+        }
+
+        .time-badge {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .timer-progress {
+            display: none;
+        }
+    }
     </style>
 
     <div class="page-container">
@@ -261,14 +418,12 @@
                 <i class="fas fa-plus"></i> Nueva tarea
             </a>
         </div>
-
         <!-- Two Column Layout -->
         <div class="two-column-layout">
             <!-- Calendar Column -->
             <div class="section-container">
                 <div class="calendar-container" id="calendar"></div>
             </div>
-
             <!-- Timer Column -->
             <div class="section-container">
                 <h2 class="timer-section-title">Tiempos de estudio</h2>
@@ -286,46 +441,64 @@
                             <i class="fas fa-redo"></i> Reiniciar
                         </button>
                     </div>
-
                     <div class="timer-laps">
                         <!-- Laps will be added here dynamically -->
+                    </div>
+                    <div class="timer-laps-done">
+                        <div class="timer-history">
+                            <h3 class="timer-history-title">Historial de tiempos</h3>
+                            {% if timers is empty %}
+                                <div class="empty-state">
+                                    <i class="fas fa-clock empty-icon"></i>
+                                    <p>No hay registros de tiempo aún</p>
+                                    <span class="empty-subtitle">Los tiempos de estudio aparecerán aquí</span>
+                                </div>
+                            {% else %}
+                                <div class="timer-table-container">
+                                    <table class="timer-table">
+                                        <thead>
+                                            <tr>
+                                                <th><i class="fas fa-stopwatch"></i> Tiempo</th>
+                                                <th><i class="fas fa-calendar"></i> Fecha</th>
+                                                <th><i class="fas fa-chart-line"></i> Progreso</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for timer in timers|slice(0, 5) %}
+                                                <tr class="timer-entry">
+                                                    <td class="timer-time">
+                                                        <span class="time-badge">
+                                                            {{ _self.format_time(timer.time) }}
+                                                        </span>
+                                                    </td>
+                                                    <td class="timer-date">
+                                                        {{ timer.date|date('d/m/Y') }}
+                                                    </td>
+                                                    <td class="timer-progress">
+                                                        <div class="progress-bar" style="--progress: {{ (timer.time / 7200000) * 100 }}%"></div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% if timers|length > 5 %}
+                                    <div class="view-all-container">
+                                        <button class="view-all-button">
+                                            Ver todo el historial
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-{# En tu archivo show.html.twig #}
-
-{% macro format_time(ms) %}
-    {% set seconds = ms / 1000 %}
-    {% set minutes = seconds / 60 %}
-    {% set hours = minutes / 60 %}
-    {% set display_seconds = seconds % 60 %}
-    {% set display_minutes = minutes % 60 %}
-    {% set display_hours = hours % 24 %}
-    {{ '%02d:%02d:%02d'|format(display_hours, display_minutes, display_seconds) }}
-{% endmacro %}
-
-<h2>Cronómetros para la materia: {{ materium.nombre }}</h2>
-
-    <ul>
-        {% if timers is empty %}
-            <li>No hay cronómetros registrados para esta materia.</li>
-        {% else %}
-            {% for timer in timers %}
-                <li>
-                    Tiempo: {{ _self.format_time(timer.time) }} | Fecha: {{ timer.date|date('d/m/Y') }}
-                </li>
-            {% endfor %}
-        {% endif %}
-    </ul>
-    
-
-        
-        
-
-        <!-- Navigation Links -->
-        <div class="navigation-links">
+    <!-- Navigation Links -->
+    <div class="navigation-links">
             <a href="{{ path('app_materia_index') }}" class="custom-button">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
