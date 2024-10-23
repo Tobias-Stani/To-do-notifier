@@ -23,6 +23,9 @@ class Tarea
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $fecha = null;
 
+    #[ORM\ManyToOne(inversedBy: 'tareas')]
+    private ?Materia $materia = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +63,18 @@ class Tarea
     public function setFecha(\DateTimeInterface $fecha): static
     {
         $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    public function getMateria(): ?Materia
+    {
+        return $this->materia;
+    }
+
+    public function setMateria(?Materia $materia): static
+    {
+        $this->materia = $materia;
 
         return $this;
     }

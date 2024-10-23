@@ -23,14 +23,21 @@ class Materia
     private ?Cuatrimestre $cuatrimestre = null;
 
     /**
+     * @var Collection<int, Tarea>
+     */
+    #[ORM\OneToMany(targetEntity: Tarea::class, mappedBy: 'materia')]
+    private Collection $tareas;
+
+    /**
      * @var Collection<int, Cronometro>
      */
     #[ORM\OneToMany(targetEntity: Cronometro::class, mappedBy: 'materia')]
-    private Collection $cronometro;
+    private Collection $cronometros;
 
     public function __construct()
     {
-        $this->cronometro = new ArrayCollection();
+        $this->tareas = new ArrayCollection();
+        $this->cronometros = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -63,18 +70,48 @@ class Materia
     }
 
     /**
+     * @return Collection<int, Tarea>
+     */
+    public function getTareas(): Collection
+    {
+        return $this->tareas;
+    }
+
+    public function addTarea(Tarea $tarea): static
+    {
+        if (!$this->tareas->contains($tarea)) {
+            $this->tareas->add($tarea);
+            $tarea->setMateria($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTarea(Tarea $tarea): static
+    {
+        if ($this->tareas->removeElement($tarea)) {
+            // set the owning side to null (unless already changed)
+            if ($tarea->getMateria() === $this) {
+                $tarea->setMateria(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection<int, Cronometro>
      */
-    public function getCronometro(): Collection
+    public function getCronometros(): Collection
     {
-        return $this->cronometro;
+        return $this->cronometros;
     }
 
     public function addCronometro(Cronometro $cronometro): static
     {
-        if (!$this->cronometro->contains($cronometro)) {
-            $this->cronometro->add($cronometro);
-            $cronometro->setMateria($this);
+        if (!$this->cronometros->contains($cronometro)) {
+            $this->cronometros->add($cronometro);
+            $cronometro->setMateria($this); // Cambiado a setMateria()
         }
 
         return $this;
@@ -82,9 +119,9 @@ class Materia
 
     public function removeCronometro(Cronometro $cronometro): static
     {
-        if ($this->cronometro->removeElement($cronometro)) {
+        if ($this->cronometros->removeElement($cronometro)) {
             // set the owning side to null (unless already changed)
-            if ($cronometro->getMateria() === $this) {
+            if ($cronometro->getMateria() === $this) { // Cambiado a getMateria()
                 $cronometro->setMateria(null);
             }
         }

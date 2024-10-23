@@ -294,6 +294,36 @@
             </div>
         </div>
 
+{# En tu archivo show.html.twig #}
+
+{% macro format_time(ms) %}
+    {% set seconds = ms / 1000 %}
+    {% set minutes = seconds / 60 %}
+    {% set hours = minutes / 60 %}
+    {% set display_seconds = seconds % 60 %}
+    {% set display_minutes = minutes % 60 %}
+    {% set display_hours = hours % 24 %}
+    {{ '%02d:%02d:%02d'|format(display_hours, display_minutes, display_seconds) }}
+{% endmacro %}
+
+<h2>Cronómetros para la materia: {{ materium.nombre }}</h2>
+
+    <ul>
+        {% if timers is empty %}
+            <li>No hay cronómetros registrados para esta materia.</li>
+        {% else %}
+            {% for timer in timers %}
+                <li>
+                    Tiempo: {{ _self.format_time(timer.time) }} | Fecha: {{ timer.date|date('d/m/Y') }}
+                </li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+    
+
+        
+        
+
         <!-- Navigation Links -->
         <div class="navigation-links">
             <a href="{{ path('app_materia_index') }}" class="custom-button">
@@ -340,6 +370,10 @@
         });
     </script>
 
+    <script>
+        const materiaId = {{ materium.id }};
+    </script>
+    
     <!-- Timer Script -->
     <script>
         let timerInterval;
@@ -381,8 +415,32 @@
                 addLap();
                 timerContainer.classList.remove('timer-running');
                 startBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar';
+        
+                // Aquí es donde enviamos el tiempo a la base de datos
+                const materiaId = {{ materium.id }}; // El ID de la materia actual
+                const time = elapsedTime; // El tiempo que queremos guardar
+        
+                // Enviar el tiempo al backend usando fetch (AJAX)
+                fetch(`/materia/${materiaId}/cronometro`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: `time=${time}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log('Tiempo guardado exitosamente');
+                    } else {
+                        console.error('Error al guardar el tiempo');
+                    }
+                })
+                .catch(error => console.error('Error en la solicitud:', error));
             }
         });
+        
 
         resetBtn.addEventListener('click', () => {
             clearInterval(timerInterval);

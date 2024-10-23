@@ -20,7 +20,7 @@ class Cronometro
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\ManyToOne(inversedBy: 'cronometro')]
+    #[ORM\ManyToOne(inversedBy: 'cronometros')]  // Relación correcta con Materia
     private ?Materia $materia = null;
 
     public function getId(): ?int

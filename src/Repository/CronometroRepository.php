@@ -40,4 +40,26 @@ class CronometroRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function save(Cronometro $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
+    
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function findLastFiveByMateria($materiaId): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.materia = :materiaId')
+            ->setParameter('materiaId', $materiaId)
+            ->orderBy('c.id', 'DESC') // Ordenar por ID en orden descendente
+            ->setMaxResults(5) // Limitar a los últimos 5 registros
+            ->getQuery()
+            ->getResult();
+    }
+
+
 }
