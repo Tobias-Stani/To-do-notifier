@@ -34,11 +34,11 @@ class TareaType extends AbstractType
         ])
         ->add('materia', EntityType::class, [
             'class' => Materia::class,
-            'choice_label' => 'nombre', // Campo que se mostrará en el select
+            'choice_label' => 'nombre', 
             'attr' => [
                 'class' => 'form-control',
             ],
-            'placeholder' => 'Selecciona una materia', // Opción por defecto
+            'placeholder' => 'Selecciona una materia', 
         ]);
     }
 

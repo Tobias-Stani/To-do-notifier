@@ -423,7 +423,33 @@
             <!-- Calendar Column -->
             <div class="section-container">
                 <div class="calendar-container" id="calendar"></div>
+                <div class="calendar-container">
+                    <h2>Tareas</h2>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Descripción</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tarea in tareasSemana %}
+                                <tr>
+                                    <td>{{ tarea.titulo }}</td>
+                                    <td>{{ tarea.descripcion }}</td>
+                                    <td>{{ tarea.fecha ? tarea.fecha|date('d-m-Y') : 'Sin fecha' }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No hay tareas esta semana</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
             <!-- Timer Column -->
             <div class="section-container">
                 <h2 class="timer-section-title">Tiempos de estudio</h2>
@@ -496,6 +522,7 @@
                 </div>
             </div>
         </div>
+    </div>
 
     <!-- Navigation Links -->
     <div class="navigation-links">
@@ -515,11 +542,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Obtiene los eventos y los ID de materia de la plantilla
             var events = {{ events|raw }};
+            var materiaId = {{ materium.id }}; // Asegúrate de que 'materium' es un objeto con el ID de la materia
             var calendarEl = document.getElementById('calendar');
+    
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                events: events,
+                events: events, // Aquí se cargarán solo las tareas filtradas por ID de materia
                 editable: true,
                 height: 'auto',
                 headerToolbar: {
@@ -528,7 +558,8 @@
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
                 dateClick: function(info) {
-                    window.location.href = "{{ path('app_tarea_new') }}?fecha=" + info.dateStr;
+                    // Redirigir a la página de nueva tarea con materiaId y fecha
+                    window.location.href = "{{ path('app_tarea_new') }}?fecha=" + info.dateStr + "&materiaId=" + materiaId;
                 },
                 eventClick: function(info) {
                     // Mejorar la visualización del evento
@@ -539,6 +570,7 @@
                     });
                 }
             });
+    
             calendar.render();
         });
     </script>
@@ -546,6 +578,12 @@
     <script>
         const materiaId = {{ materium.id }};
     </script>
+
+
+<h1>{{materium.id}}</h1>
+
+
+    
     
     <!-- Timer Script -->
     <script>

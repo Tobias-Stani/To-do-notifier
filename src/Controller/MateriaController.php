@@ -54,11 +54,10 @@ class MateriaController extends AbstractController
     
         // Obtener los últimos 5 cronómetros de la materia usando el nuevo método
         $timers = $cronometroRepository->findLastFiveByMateria($materium->getId());
-
-        $tareas = $tareaRepository->findAll();
     
-        $ultimasTareas = $tareaRepository->findBy([], ['fecha' => 'DESC'], 5);
-    
+        // Obtener las últimas 5 tareas
+        $ultimasTareas = $tareaRepository->findBy(['materia' => $materium->getId()], ['fecha' => 'DESC'], 5);
+        
         // Preparar eventos para el calendario
         $events = [];
         foreach ($tareas as $tarea) {
@@ -66,39 +65,45 @@ class MateriaController extends AbstractController
                 'id' => $tarea->getId(),
                 'title' => $tarea->getTitulo(),
                 'start' => $tarea->getFecha()->format('Y-m-d'),
+                'description' => $tarea->getDescripcion(), // También puedes agregar descripción si la necesitas
             ];
         }
-
+    
+        // Obtener tareas de la semana actual
         $inicioSemana = new \DateTime('monday this week');
         $finSemana = new \DateTime('sunday this week');
         $finSemana->setTime(23, 59, 59);
-
-        // Obtener las tareas de la semana actual
+    
         $tareasSemana = $tareaRepository->createQueryBuilder('t')
             ->where('t.fecha >= :inicioSemana')
             ->andWhere('t.fecha <= :finSemana')
+            ->andWhere('t.materia = :materia') // Filtrar por materia
             ->setParameter('inicioSemana', $inicioSemana)
             ->setParameter('finSemana', $finSemana)
+            ->setParameter('materia', $materium) // Usar el objeto de materia directamente
             ->getQuery()
             ->getResult();
-
-        $events = [];
-        foreach ($tareas as $tarea) {
-            $events[] = [
+    
+        // Preparar eventos para las tareas de la semana
+        $eventsSemana = [];
+        foreach ($tareasSemana as $tarea) {
+            $eventsSemana[] = [
                 'id' => $tarea->getId(),
                 'title' => $tarea->getTitulo(),
                 'start' => $tarea->getFecha()->format('Y-m-d'),
             ];
         }
-
+    
         return $this->render('materia/show.html.twig', [
             'materium' => $materium,
-            'events' => json_encode($events),
-            'timers' => $timers, // Pasar los cronómetros a la vista
-            'ultimasTareas' => $ultimasTareas, 
+            'events' => json_encode($events), // Aquí puedes enviar todos los eventos al calendario
+            'timers' => $timers,
+            'ultimasTareas' => $ultimasTareas,
             'tareasSemana' => $tareasSemana,
+            'tareas' => $tareas,
         ]);
-    }      
+    }
+    
     
 
     #[Route('/{id}/edit', name: 'app_materia_edit', methods: ['GET', 'POST'])]
