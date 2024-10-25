@@ -175,6 +175,51 @@
                                     </div>
                                 {% endif %}
                             {% endif %}
+
+                            <div class="time-totals-container">
+                                <div class="total-time-week">
+                                    <h3>
+                                        <span class="emoji-title">📅</span>
+                                        Tiempo total de esta semana
+                                    </h3>
+                                    <p>{{ totalTimeSemana.hours }} horas y {{ totalTimeSemana.minutes }} minutos</p>
+                                    
+                                    <div class="progress-container">
+                                        <div class="progress-info">
+                                            <span>Progreso semanal</span>
+                                            <span>65%</span>
+                                        </div>
+                                        <div class="progress-bar-container">
+                                            <div class="progress-bar" style="width: 65%"></div>
+                                        </div>
+                                        <div class="progress-label">
+                                            Objetivo: 25 horas
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="total-time-day">
+                                    <h3>
+                                        <span class="emoji-title">⌚</span>
+                                        Tiempo total de hoy
+                                    </h3>
+                                    <p>{{ totalTimeDia.hours }} horas y {{ totalTimeDia.minutes }} minutos</p>
+                                    
+                                    <div class="progress-container">
+                                        <div class="progress-info">
+                                            <span>Progreso diario</span>
+                                            <span>45%</span>
+                                        </div>
+                                        <div class="progress-bar-container">
+                                            <div class="progress-bar" style="width: 45%"></div>
+                                        </div>
+                                        <div class="progress-label">
+                                            Objetivo: 5 horas
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

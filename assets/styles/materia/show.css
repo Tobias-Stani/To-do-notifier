@@ -479,3 +479,170 @@ transform: translateX(4px);
 .btn, .badge {
     transition: all 0.2s ease-in-out;
 }
+
+/* estilo para total time week y day */
+
+/* Contenedor principal para los totales */
+.time-totals-container {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .total-time-week,
+  .total-time-day {
+    flex: 1;
+    min-width: 250px;
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .total-time-week:hover,
+  .total-time-day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .total-time-week h3,
+  .total-time-day h3 {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .emoji-title {
+    font-size: 1.4rem; /* Hace el emoji un poco más grande que el texto */
+    display: inline-flex;
+    align-items: center;
+    animation: bounce 2s infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  
+  .total-time-week p,
+  .total-time-day p {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+    padding: 0.5rem 0;
+  }
+  
+  /* Estilos específicos para cada tipo */
+  .total-time-week {
+    background: linear-gradient(to right bottom, #eff6ff, #ffffff);
+    border-left: 4px solid #3b82f6;
+  }
+  
+  .total-time-day {
+    background: linear-gradient(to right bottom, #ecfdf5, #ffffff);
+    border-left: 4px solid #10b981;
+  }
+  
+  /* Diseño responsive */
+  @media (max-width: 768px) {
+    .time-totals-container {
+      flex-direction: column;
+    }
+    
+    .total-time-week,
+    .total-time-day {
+      width: 100%;
+    }
+  }
+
+  /* Nuevos estilos para la barra de progreso */
+.progress-container {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+  
+  .progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease-in-out;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.1) 25%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.1) 75%
+    );
+    animation: shine 2s infinite linear;
+  }
+  
+  .total-time-week .progress-bar {
+    background-color: #3b82f6;
+  }
+  
+  .total-time-day .progress-bar {
+    background-color: #10b981;
+  }
+  
+  .progress-label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+    text-align: right;
+  }
+  
+  @keyframes shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  
+  /* Estilos responsive mantenidos... */
+  @media (max-width: 768px) {
+    .time-totals-container {
+      flex-direction: column;
+    }
+    
+    .total-time-week,
+    .total-time-day {
+      width: 100%;
+    }
+  }

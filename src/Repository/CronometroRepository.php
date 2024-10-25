@@ -61,5 +61,66 @@ class CronometroRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findTotalTimeByWeekAndMateria(int $materiaId): array
+    {
+        // Obtener el inicio y fin de la semana actual
+        $inicioSemana = new \DateTime('monday this week');
+        $finSemana = new \DateTime('sunday this week');
+        $finSemana->setTime(23, 59, 59);
+
+        // Crear la consulta para sumar los tiempos de los cronómetros en la semana actual
+        $qb = $this->createQueryBuilder('c')
+            ->select('SUM(c.time) as totalTime')
+            ->where('c.materia = :materiaId')
+            ->andWhere('c.date BETWEEN :inicioSemana AND :finSemana')
+            ->setParameter('materiaId', $materiaId)
+            ->setParameter('inicioSemana', $inicioSemana)
+            ->setParameter('finSemana', $finSemana);
+
+        // Obtener el tiempo total en milisegundos
+        $result = $qb->getQuery()->getSingleScalarResult();
+        $totalTimeInMilliseconds = $result ? (int) $result : 0;
+
+        // Convertir milisegundos a horas y minutos
+        $hours = floor($totalTimeInMilliseconds / (1000 * 60 * 60));
+        $minutes = floor(($totalTimeInMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+        // Devolver un array con el total de horas y minutos
+        return [
+            'hours' => $hours,
+            'minutes' => $minutes
+        ];
+    }
+
+    public function findTotalTimeByDayAndMateria(int $materiaId): array
+    {
+        // Obtener el inicio y fin del día actual
+        $inicioDia = new \DateTime('today');
+        $finDia = new \DateTime('today');
+        $finDia->setTime(23, 59, 59); // Final del día
+
+        // Crear la consulta para sumar los tiempos de los cronómetros del día actual
+        $qb = $this->createQueryBuilder('c')
+            ->select('SUM(c.time) as totalTime')
+            ->where('c.materia = :materiaId')
+            ->andWhere('c.date BETWEEN :inicioDia AND :finDia')
+            ->setParameter('materiaId', $materiaId)
+            ->setParameter('inicioDia', $inicioDia)
+            ->setParameter('finDia', $finDia);
+
+        // Obtener el tiempo total en milisegundos
+        $result = $qb->getQuery()->getSingleScalarResult();
+        $totalTimeInMilliseconds = $result ? (int) $result : 0;
+
+        // Convertir milisegundos a horas y minutos
+        $hours = floor($totalTimeInMilliseconds / (1000 * 60 * 60));
+        $minutes = floor(($totalTimeInMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+        // Devolver un array con el total de horas y minutos
+        return [
+            'hours' => $hours,
+            'minutes' => $minutes
+        ];
+    }
 
 }

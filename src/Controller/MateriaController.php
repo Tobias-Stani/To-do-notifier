@@ -57,7 +57,14 @@ class MateriaController extends AbstractController
     
         // Obtener las últimas 5 tareas
         $ultimasTareas = $tareaRepository->findBy(['materia' => $materium->getId()], ['fecha' => 'DESC'], 5);
+
+        $totalTimeSemana = $cronometroRepository->findTotalTimeByWeekAndMateria($materium->getId());
+
+        $totalTimeDia = $cronometroRepository->findTotalTimeByDayAndMateria($materium->getId());
+
         
+        //dd($totalTimeSemana);
+
         // Preparar eventos para el calendario
         $events = [];
         foreach ($tareas as $tarea) {
@@ -101,6 +108,8 @@ class MateriaController extends AbstractController
             'ultimasTareas' => $ultimasTareas,
             'tareasSemana' => $tareasSemana,
             'tareas' => $tareas,
+            'totalTimeSemana' => $totalTimeSemana,
+            'totalTimeDia' => $totalTimeDia, 
         ]);
     }
     

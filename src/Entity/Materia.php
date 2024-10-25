@@ -22,6 +22,9 @@ class Materia
     #[ORM\JoinColumn(nullable: false)]
     private ?Cuatrimestre $cuatrimestre = null;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $dailyGoal = null;
+
     /**
      * @var Collection<int, Tarea>
      */
@@ -126,6 +129,18 @@ class Materia
             }
         }
 
+        return $this;
+    }
+
+    public function getDailyGoal(): ?int
+    {
+        return $this->dailyGoal;
+    }
+    
+    public function setDailyGoal(?int $dailyGoal): self
+    {
+        $this->dailyGoal = $dailyGoal;
+    
         return $this;
     }
 }
