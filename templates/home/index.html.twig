@@ -5,304 +5,103 @@
 {% endblock %}
 
 {% block contenido %}
-    <style>
-        :root {
-            --primary-color: #34495e;         /* Azul oscuro */
-            --secondary-color: #3498db;       /* Azul claro */
-            --accent-color: #2ecc71;          /* Verde */
-            --dark-color: #2c3e50;            /* Azul muy oscuro */
-            --light-color: #ecf0f1;           /* Gris muy claro */
-            --danger-color: #e74c3c;          /* Rojo */
-            --text-color: #2c3e50;            /* Color texto principal */
-            --text-light: #7f8c8d;            /* Color texto secundario */
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --card-shadow: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -2px var(--shadow-color);
-            --transition-base: all 0.3s ease;
-        }
-    
-        /* Estilos de encabezado */
-        .app-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
-            color: white;
-            padding: 2.5rem 1.5rem;
-            border-radius: 0 0 2rem 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            box-shadow: 0 4px 12px var(--shadow-color);
-        }
-    
-        .app-header h1 {
-            font-size: 2.25rem;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-        }
-    
-        .app-header p {
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-            color: var(--light-color);
-        }
-    
-        /* Barra de acción */
-        .action-bar {
-            background: white;
-            padding: 1.25rem;
-            border-radius: 1rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-            position: sticky;
-            top: 1rem;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-    
-        /* Botones de acción */
-        .action-button, .btn-create-career, .btn-create-semester {
-            padding: 0.875rem 1.75rem;
-            border-radius: 0.75rem;
-            border: none;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: var(--transition-base);
-            justify-content: center;
-            text-decoration: none;
-            color: white;
-        }
-    
-        .btn-create-career {
-            background: var(--primary-color);
-        }
-    
-        .btn-create-career:hover {
-            background: var(--dark-color);
-        }
-    
-        .btn-create-semester {
-            background: var(--accent-color);
-        }
-    
-        .btn-create-semester:hover {
-            background: #27ae60;
-        }
-    
-        /* Tarjetas de carrera y semestre */
-        .career-card, .semester-card {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 1.5rem;
-            padding: 1.5rem;
-            border: 1px solid rgba(236, 240, 241, 0.5);
-            transition: var(--transition-base);
-        }
-    
-        .career-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 20px var(--shadow-color);
-        }
-    
-        .career-title {
-            font-size: 1.75rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            position: relative;
-        }
-    
-        .career-title:after {
-            content: '▼';
-            font-size: 0.9rem;
-            color: var(--secondary-color);
-            position: absolute;
-            right: 0;
-            transform: rotate(0deg);
-            transition: var(--transition-base);
-        }
-    
-        .career-card.active .career-title:after {
-            transform: rotate(180deg);
-        }
-    
-        .semester-section {
-            display: none;
-            animation: fadeInUp 0.3s ease forwards;
-            opacity: 0;
-        }
-    
-        .career-card.active .semester-section {
-            display: block;
-            opacity: 1;
-        }
-    
-        .semester-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-    
-        .semester-title {
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-    
-        /* Lista de materias */
-        .subject-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-    
-        .subject-item {
-            background: var(--light-color);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
-            border: 1px solid rgba(236, 240, 241, 0.8);
-            transition: var(--transition-base);
-        }
-    
-        .subject-item:hover {
-            background: var(--accent-color);
-            color: white;
-        }
-    
-        .btn-view-subject {
-            background: var(--secondary-color);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            transition: var(--transition-base);
-        }
-    
-        .btn-view-subject:hover {
-            background: #2980b9;
-        }
-    
-        /* Estado vacío */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-light);
-            background: white;
-            border-radius: 1rem;
-            margin: 1rem 0;
-        }
-    
-        /* Animaciones */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    
-        .career-card {
-            animation: fadeInUp 0.5s ease forwards;
-            opacity: 0;
-        }
-    
-        .career-card:nth-child(1) { animation-delay: 0.1s; }
-        .career-card:nth-child(2) { animation-delay: 0.2s; }
-        .career-card:nth-child(3) { animation-delay: 0.3s; }
-    
-        @media (prefers-reduced-motion: reduce) {
-            .career-card {
-                animation: none;
-                opacity: 1;
-            }
-        }
-    
-        /* Responsive */
-        @media (max-width: 768px) {
-            .action-bar, .career-header, .semester-header, .semester-actions, .subject-item {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
-            }
-    
-            .app-header {
-                padding: 2rem 1rem;
-            }
-    
-            .app-header h1 {
-                font-size: 1.75rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('../assets/styles/home/index.css') }}">    
 
-    <header class="app-header">
-        <h1>Sistema de Gestión Académica</h1>
-        <p>Gestiona tus carreras, cuatrimestres y materias de manera eficiente y organizada</p>
-    </header>
 
-    <div class="career-list">
-        {% for carrera in carreras %}
-            <div class="career-card">
-                <div class="career-title" onclick="toggleAccordion(this)">
-                    <span>{{ carrera.nombre }}</span>
+    <div class="app-container">
+        <header class="app-header shadow-sm">
+            <h1>Sistema de Gestión Académica</h1>
+            <p>Administra tus carreras, cuatrimestres y materias de forma intuitiva y eficiente</p>
+        </header>
+
+
+        <!-- Nueva barra de acciones -->
+        <div class="action-bar">
+            <a href="{{ path('app_carrera_new') }}" class="action-button btn-new-career">
+                <i class="bi bi-mortarboard-fill action-icon"></i>
+                <span>Nueva Carrera</span>
+            </a>
+            <a href="{{ path('app_cuatrimestre_new') }}" class="action-button btn-new-semester">
+                <i class="bi bi-calendar-plus-fill action-icon"></i>
+                <span>Nuevo Cuatrimestre</span>
+            </a>
+            <a href="{{ path('app_materia_new') }}" class="action-button btn-new-materia">
+                <i class="bi bi-calendar-plus-fill action-icon"></i>
+                <span>Nueva Materia</span>
+            </a>
+        </div>
+
+        <div class="career-list">
+            {% for carrera in carreras %}
+                <div class="career-card" style="--animation-order: {{ loop.index }}">
+                    <div class="career-title" onclick="toggleAccordion(this)">
+                        <span>{{ carrera.nombre }}</span>
+                            
+                        {% if carrera.cuatrimestres is not empty %}
+                            <span class="semester-badge">
+                                {{ carrera.cuatrimestres|length }} cuatrimestres
+                            </span>
+                        {% endif %}
+                    </div>
+
                     {% if carrera.cuatrimestres is not empty %}
-                        <span class="semester-badge">
-                            {{ carrera.cuatrimestres|length }} cuatrimestres
-                        </span>
+                        <div class="semester-section">
+                            {% for cuatrimestre in carrera.cuatrimestres %}
+                                <div class="semester-card">
+                                    <h3 class="semester-title">Cuatrimestre {{ cuatrimestre.numero }} - {{ cuatrimestre.anio }}</h3>
+                                    <ul class="subject-list">
+                                        {% for materia in cuatrimestre.materia %}
+                                            <li class="subject-item">
+                                                <span class="subject-name">{{ materia.nombre }}</span>
+                                                <a href="{{ path('app_materia_show', {'id': materia.id}) }}" 
+                                                   class="btn-view-subject">
+                                                    <i class="bi bi-eye"></i>
+                                                    Ver detalles
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="bi bi-calendar-x"></i>
+                            <p>Esta carrera aún no tiene cuatrimestres asignados</p>
+                            <small>Agregar un nuevo cuatrimestre para comenzar</small>
+                        </div>
                     {% endif %}
                 </div>
-
-                {% if carrera.cuatrimestres is not empty %}
-                    <div class="semester-section">
-                        {% for cuatrimestre in carrera.cuatrimestres %}
-                            <div class="semester-card">
-                                <div class="semester-header">
-                                    <h3 class="semester-title">Cuatrimestre {{ cuatrimestre.numero }} - {{ cuatrimestre.anio }}</h3>
-                                </div>
-                                <ul class="subject-list">
-                                    {% for materia in cuatrimestre.materia %}
-                                        <li class="subject-item">
-                                            <span class="subject-name">{{ materia.nombre }}</span>
-                                            <a href="{{ path('app_materia_show', {'id': materia.id}) }}" class="btn-view-subject">
-                                                <i class="bi bi-eye"></i> Ver materia
-                                            </a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="empty-state">
-                        <i class="bi bi-calendar-x"></i>
-                        <p>Esta carrera aún no tiene cuatrimestres asignados</p>
-                    </div>
-                {% endif %}
-            </div>
-        {% else %}
-            <div class="empty-state">
-                <i class="bi bi-mortarboard"></i>
-                <p>No se encontraron carreras disponibles</p>
-                <small>Comienza creando una nueva carrera</small>
-            </div>
-        {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-mortarboard"></i>
+                    <p>No se encontraron carreras disponibles</p>
+                    <small>Comienza creando una nueva carrera</small>
+                </div>
+            {% endfor %}
+        </div>
     </div>
-</div>
 
-<script>
-    // Función para mostrar/ocultar secciones de cuatrimestres
-    function toggleAccordion(element) {
-        element.parentElement.classList.toggle('active');
-    }
-</script>
+    <script>
+        function toggleAccordion(element) {
+            const card = element.closest('.career-card');
+            card.classList.toggle('active');
+            
+            // Animación suave al expandir/contraer
+            const section = card.querySelector('.semester-section');
+            if (card.classList.contains('active')) {
+                section.style.maxHeight = section.scrollHeight + "px";
+            } else {
+                section.style.maxHeight = 0;
+            }
+        }
+
+        // Animación inicial de las tarjetas
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.career-card');
+            cards.forEach((card, index) => {
+                card.style.setProperty('--animation-order', index);
+            });
+        });
+    </script>
 {% endblock %}

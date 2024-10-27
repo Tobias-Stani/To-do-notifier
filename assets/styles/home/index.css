@@ -1,0 +1,319 @@
+:root {
+    --primary-color: #4F46E5;         /* Indigo moderno */
+    --secondary-color: #818CF8;       /* Indigo claro */
+    --accent-color: #10B981;          /* Esmeralda */
+    --dark-color: #1F2937;            /* Gris oscuro */
+    --light-color: #F3F4F6;           /* Gris claro */
+    --danger-color: #EF4444;          /* Rojo */
+    --text-color: #111827;            /* Negro suave */
+    --text-light: #6B7280;            /* Gris medio */
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --card-shadow: 0 8px 16px var(--shadow-color);
+    --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Header moderno con gradiente y blur */
+.app-header {
+    background: linear-gradient(135deg, var(--primary-color), #4338CA);
+    color: white;
+    padding: 3rem 1.5rem;
+    border-radius: 0 0 2.5rem 2.5rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.app-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05'/%3E%3C/svg%3E");
+    opacity: 0.1;
+}
+
+.app-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    letter-spacing: -0.025em;
+}
+
+.app-header p {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Tarjetas con efecto de cristal */
+.career-card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(12px);
+    border-radius: 1.25rem;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1.5rem;
+    padding: 1.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: var(--transition-base);
+    transform: translateY(0);
+}
+
+.career-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px var(--shadow-color);
+}
+
+.career-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+.semester-badge {
+    font-size: 0.875rem;
+    background: var(--light-color);
+    color: var(--text-light);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 500;
+}
+
+/* Animación suave para el acordeón */
+.semester-section {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.career-card.active .semester-section {
+    max-height: 2000px; /* Valor alto para permitir todo el contenido */
+}
+
+.semester-card {
+    background: var(--light-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.semester-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+/* Lista de materias moderna */
+.subject-list {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0;
+}
+
+.subject-item {
+    background: white;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: var(--transition-base);
+}
+
+.subject-item:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateX(4px);
+}
+
+.subject-name {
+    font-weight: 500;
+}
+
+.btn-view-subject {
+    background: var(--secondary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-view-subject:hover {
+    background: var(--primary-color);
+    transform: translateX(2px);
+}
+
+/* Estado vacío mejorado */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 1.25rem;
+    margin: 2rem 0;
+    color: var(--text-light);
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state small {
+    color: var(--text-light);
+}
+
+/* Responsive mejorado */
+@media (max-width: 768px) {
+    .app-header {
+        padding: 2rem 1rem;
+        border-radius: 0 0 1.5rem 1.5rem;
+    }
+
+    .app-header h1 {
+        font-size: 2rem;
+    }
+
+    .career-title {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+
+    .semester-badge {
+        width: fit-content;
+        margin: 0 auto;
+    }
+
+    .subject-item {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+}
+
+/* Animaciones suaves */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.career-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+    animation-delay: calc(var(--animation-order) * 0.1s);
+}
+
+/* Estilos para la barra de acciones */
+.action-bar {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    margin: -1rem 1rem 2rem 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    display: flex;
+    gap: 1rem;
+    position: relative;
+    z-index: 10;
+}
+
+.action-button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 100%);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.action-button:hover::before {
+    transform: translateX(0);
+}
+
+.btn-new-career {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-new-career:hover {
+    background: #4338CA;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.btn-new-semester {
+    background: var(--accent-color);
+    color: white;
+}
+
+.btn-new-materia{
+    background: #d11e48;
+    color: white;
+}
+
+.btn-new-semester:hover {
+    background: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.action-icon {
+    font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .action-bar {
+        flex-direction: column;
+        margin: 1rem;
+    }
+
+    .action-button {
+        width: 100%;
+    }
+}
