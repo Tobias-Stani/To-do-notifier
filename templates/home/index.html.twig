@@ -196,6 +196,175 @@
                 transition: none;
             }
         }
+
+
+        .staggered-list {
+            padding: 20px;
+        }
+            
+        .career-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden; /* Para evitar que los elementos hijos se desborden */
+        }
+            
+        .career-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+            
+        .career-header {
+            background: #f7f9fc;
+            padding: 15px;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+        }
+            
+        .career-header::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 8px;
+            background: linear-gradient(90deg, rgba(13, 110, 253, 0.3), rgba(13, 110, 253, 0));
+            border-radius: 0 0 12px 12px;
+        }
+            
+        .semester-count {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+            
+        .semester-accordion {
+            padding: 15px;
+        }
+            
+        .semester-container {
+            margin-top: 15px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+            
+        .semester-container:hover {
+            transform: translateY(-2px);
+        }
+            
+        .semester-header {
+            background: #f1f3f5;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+        }
+            
+        .subject-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+        }
+            
+        .subject-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            border-bottom: 1px solid #dee2e6;
+            transition: background 0.3s ease;
+        }
+            
+        .subject-item:hover {
+            background: #f8f9fa;
+        }
+            
+        .subject-item:last-child {
+            border-bottom: none;
+        }
+            
+        .empty-message {
+            text-align: center;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+            
+        .btn-custom {
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+            
+        .btn-primary {
+            background: #0d6efd;
+            color: white;
+        }
+            
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+            
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+            
+        .btn-custom:hover {
+            transform: translateY(-2px);
+        }
+            
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+            
+        .btn-info:hover {
+            background: #138496;
+        }
+            
+        .btn-success:hover {
+            background: #218838;
+        }
+            
+        /* Iconos */
+        .btn-custom i {
+            margin-right: 5px;
+        }
+            
+        /* Animación al cargar */
+        .staggered-list {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+            
+        .staggered-list.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+            
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .career-card {
+                margin: 10px;
+            }
+            
+            .subject-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+                gap: 5px;
+            }
+        }
+  
     </style>
 
     <div class="row">
@@ -203,7 +372,9 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-content text-center p-md">
                     <h2>
-                        <span class="text-navy">APLICACION PARA LA UNIVERSIDAD</span>
+                        <span class="text-navy">
+                            APLICACION PARA LA UNIVERSIDAD
+                        </span>
                     </h2>
                     <p>
                         Guarda tareas, recordatorios etc.
@@ -214,56 +385,122 @@
     </div>
 
     <div class="container py-4">
-        <h1 class="mb-4">Mis Carreras</h1>
+        <h1 class="mb-4">
+            Mis Carreras
+        </h1>
 
-        <!-- Botones de acción -->
         <div class="action-buttons">
             <a href="{{ path('app_carrera_new') }}" class="action-button btn-create-carrera">
-                <i class="bi bi-plus-circle me-2"></i>Crear Carrera
+                <i class="bi bi-plus-circle me-2"></i>
+                Crear Carrera
             </a>
             <a href="{{ path('app_cuatrimestre_new') }}" class="action-button btn-create-cuatrimestre">
-                <i class="bi bi-plus-square me-2"></i>Nuevo Cuatrimestre
+                <i class="bi bi-plus-square me-2"></i>
+                Nuevo Cuatrimestre
             </a>
         </div>
 
         <div class="staggered-list">
             {% for carrera in carreras %}
-            <div class="staggered-item">
-                <div class="staggered-content">
-                    <div class="carrera-header d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">{{ carrera.nombre }}</h4>
-                        <a href="{{ path('app_carrera_show', {'id': carrera.id}) }}" 
-                           class="btn btn-primary btn-sm">Ver Carrera</a>
+                <div class="career-card">
+                    <div class="career-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h3 class="mb-0">
+                                    {{ carrera.nombre }}
+                                </h3>
+                                {% if carrera.cuatrimestres is not empty %}
+                                    <span class="semester-count mt-2">
+                                        {{ carrera.cuatrimestres|length }}
+                                        cuatrimestres
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <a href="{{ path('app_carrera_show', {'id': carrera.id}) }}" class="btn-custom btn-primary">
+                                <i class="bi bi-eye"></i>
+                                Ver detalles
+                            </a>
+                        </div>
                     </div>
 
                     {% if carrera.cuatrimestres is not empty %}
-                    <ul class="cuatrimestre-list">
-                        {% for cuatrimestre in carrera.cuatrimestres %}
-                        <li class="cuatrimestre-item">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold">
-                                    Cuatrimestre {{ cuatrimestre.numero }} - Año: {{ cuatrimestre.anio }}
-                                </span>
-                                <div class="btn-group">
-                                    <a href="{{ path('app_cuatrimestre_show', {'id': cuatrimestre.id}) }}" 
-                                       class="btn btn-info btn-sm">Ver</a>
-                                    <a href="{{ path('app_materia_index', {'cuatrimestre_id': cuatrimestre.id}) }}" 
-                                       class="btn btn-success btn-sm">Ver Materias</a>
+                        <div class="semester-accordion">
+                            {% for cuatrimestre in carrera.cuatrimestres %}
+                                <div class="semester-container">
+                                    <div class="semester-header">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h4 class="mb-0">
+                                                Cuatrimestre
+                                                {{ cuatrimestre.numero }}
+                                                -
+                                                {{ cuatrimestre.anio }}
+                                            </h4>
+                                            <div class="btn-group">
+                                                <a href="{{ path('app_cuatrimestre_show', {'id': cuatrimestre.id}) }}" class="btn-custom btn-info me-2">
+                                                    <i class="bi bi-info-circle"></i>
+                                                    Ver cuatrimestre
+                                                </a>
+                                                <a href="{{ path('app_materia_index', {'cuatrimestre_id': cuatrimestre.id}) }}" class="btn-custom btn-success">
+                                                    <i class="bi bi-book"></i>
+                                                    Materias
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if cuatrimestre.materia is not empty %}
+                                        <ul class="subject-list">
+                                            {% for materia in cuatrimestre.materia %}
+                                                <li class="subject-item">
+                                                    <span>
+                                                        {{ materia.nombre }}
+                                                    </span>
+                                                    <a href="{{ path('app_materia_show', {'id': materia.id}) }}" class="btn-custom btn-info">
+                                                        <i class="bi bi-eye"></i>
+                                                        Ver materia
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p class="empty-message">
+                                            No hay materias en este cuatrimestre
+                                        </p>
+                                    {% endif %}
                                 </div>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ul>
+                            {% endfor %}
+                        </div>
                     {% else %}
-                    <p class="empty-message">No hay cuatrimestres asociados.</p>
+                        <p class="empty-message">
+                            Esta carrera aún no tiene cuatrimestres asignados
+                        </p>
                     {% endif %}
                 </div>
-            </div>
             {% else %}
-            <div class="alert alert-info">
-                No se encontraron carreras.
-            </div>
+                <div class="alert alert-info">
+                    No se encontraron carreras disponibles
+                </div>
             {% endfor %}
         </div>
-    </div>
-{% endblock %}
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const list = document.querySelector('.staggered-list');
+            list.classList.add('loaded');
+            
+            // Añadir animación de entrada escalonada para cada carrera
+            const items = document.querySelectorAll('.career-card');
+            items.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+
+    {% endblock %}
+    
