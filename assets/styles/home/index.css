@@ -1,5 +1,5 @@
 :root {
-    --primary-color: #4F46E5;         /* Indigo moderno */
+    --primary-color: #6366F1;         /* Indigo moderno */
     --secondary-color: #818CF8;       /* Indigo claro */
     --accent-color: #10B981;          /* Esmeralda */
     --dark-color: #1F2937;            /* Gris oscuro */
@@ -22,7 +22,6 @@
     text-align: center;
     position: relative;
     overflow: hidden;
-    shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .app-header::before {
@@ -226,9 +225,110 @@
 }
 
 .career-card {
-    animation: fadeInUp 0.6s ease-out forwards;
+    animation: fadeInUp 0.8s ease-out forwards;
     animation-delay: calc(var(--animation-order) * 0.1s);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    overflow: hidden;
+    cursor: pointer;
 }
+
+/* Efecto hover más sutil */
+.career-card:hover {
+    transform: translateY(-4px); /* Reduje el desplazamiento y eliminé el escalado */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06); /* Sombra más pequeña y suave */
+    border-color: rgba(99, 102, 241, 0.15);
+}
+
+/* Borde brillante en hover */
+.career-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        transparent 0%,
+        rgba(99, 102, 241, 0.05) 45%,
+        rgba(99, 102, 241, 0.1) 50%,
+        rgba(99, 102, 241, 0.05) 55%,
+        transparent 100%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+    pointer-events: none;
+}
+
+.career-card:hover::before {
+    transform: translateX(100%);
+}
+
+/* Efecto de brillo superior */
+.career-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.05) 30%,
+        transparent 100%
+    );
+    transform: rotate(-45deg) translateY(-100%);
+    transition: transform 0.5s ease;
+    pointer-events: none;
+}
+
+.career-card:hover::after {
+    transform: rotate(-45deg) translateY(0);
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.career-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: color 0.3s ease;
+    color: #333;
+}
+
+.career-card:hover .career-title {
+    color: #6366F1;
+}
+
+.semester-section {
+    padding: 1rem;
+}
+
+.semester-badge {
+    background-color: #e5e7eb;
+    color: #6366f1;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+
+
 
 /* Estilos para la barra de acciones */
 .action-bar {

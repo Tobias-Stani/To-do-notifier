@@ -1,4 +1,30 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Crear Cuatrimestre</h5>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="mb-3">
+                    {{ form_label(form.numero, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.numero, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.numero) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.anio, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.anio, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.anio) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.carrera, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.carrera, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.carrera) }}
+                </div>
+
+                <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
