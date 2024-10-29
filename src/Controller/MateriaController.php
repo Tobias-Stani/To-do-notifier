@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Cronometro;
 use App\Entity\Materia;
+use App\Form\GoalHoursStudyType;
 use App\Form\MateriaType;
 use App\Repository\CronometroRepository;
 use App\Repository\MateriaRepository;
@@ -165,5 +166,24 @@ class MateriaController extends AbstractController
         // Si es una solicitud GET, puedes devolver un mensaje o manejarlo de otra forma
         return new JsonResponse(['status' => 'This route only handles POST requests for saving the timer']);
     }    
+
+    #[Route('/{id}/hoursStudy', name: 'goalHoursStudy')]
+    public function goalHoursStudy(Request $request, Materia $materia, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(GoalHoursStudyType::class, $materia);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($materia);
+            $entityManager->flush();
+
+            // Redirigir o mostrar un mensaje de éxito
+            return $this->redirectToRoute('some_route_name'); // Cambia esto a la ruta deseada
+        }
+
+        return $this->render('materia/goalHoursStudy.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 
 }

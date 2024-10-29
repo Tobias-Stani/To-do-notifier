@@ -144,7 +144,6 @@
                                             <tr>
                                                 <th><i class="fas fa-stopwatch"></i> Tiempo</th>
                                                 <th><i class="fas fa-calendar"></i> Fecha</th>
-                                                <th><i class="fas fa-chart-line"></i> Progreso</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -157,9 +156,6 @@
                                                     </td>
                                                     <td class="timer-date">
                                                         {{ timer.date|date('d/m/Y') }}
-                                                    </td>
-                                                    <td class="timer-progress">
-                                                        <div class="progress-bar" style="--progress: {{ (timer.time / 7200000) * 100 }}%"></div>
                                                     </td>
                                                 </tr>
                                             {% endfor %}
@@ -221,230 +217,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="dashboard-container">
-                        <!-- Cards container -->
-                        <div class="charts-grid">
-                            <!-- Daily Distribution Card -->
-                            <div class="chart-card">
-                                <h3 class="chart-title">Distribución Diaria</h3>
-                                <div class="chart-wrapper">
-                                    <canvas id="pieChart"></canvas>
-                                </div>
-                            </div>
-                            <!-- Daily Goal Card -->
-                            <div class="chart-card">
-                                <h3 class="chart-title">Meta Diaria</h3>
-                                <div class="chart-wrapper">
-                                    <canvas id="gaugeChart"></canvas>
-                                </div>
-                            </div>
-                            <!-- Weekly Progress Card -->
-                            <div class="chart-card full-width">
-                                <h3 class="chart-title">Progreso Semanal</h3>
-                                <div class="chart-wrapper">
-                                    <canvas id="weeklyProgressChart"></canvas>
-                                    <div id="weeklyProgressInfo" class="progress-info"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    {% block javascripts %}
-        {{ parent() }}
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Obtener los datos y convertirlos
-                const tiempoSemana = {{ totalTimeSemana|json_encode|raw }};
-                const tiempoDia = {{ totalTimeDia|json_encode|raw }};
-                
-                // Función para convertir horas y minutos a horas decimales
-                function convertirAHoras(tiempo) {
-                    const horas = parseFloat(tiempo.hours);
-                    const minutos = parseFloat(tiempo.minutes);
-                    return horas + (minutos / 60);
-                }
-            
-                const horasDia = convertirAHoras(tiempoDia);
-                
-                // 1. Gráfico Circular (Distribución del día)
-                const ctxPie = document.getElementById('pieChart').getContext('2d');
-                new Chart(ctxPie, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Tiempo Estudiado', 'Tiempo Restante'],
-                        datasets: [{
-                            data: [horasDia, 24 - horasDia],
-                            backgroundColor: [
-                                '#4bc0c0',  // Verde para tiempo estudiado
-                                '#e9ecef'   // Gris claro para tiempo restante
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Distribución del Tiempo Diario'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const horas = Math.floor(context.raw);
-                                        const minutos = Math.round((context.raw - horas) * 60);
-                                        const porcentaje = ((context.raw / 24) * 100).toFixed(1);
-                                        return `${context.label}: ${horas}h ${minutos}m (${porcentaje}%)`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            
-                // 2. Gráfico de Progreso (meta diaria de 8 horas)
-                const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
-                const meta = 8; // Meta de 8 horas diarias
-                const porcentajeCompletado = (horasDia / meta) * 100;
-            
-                new Chart(ctxGauge, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Completado', 'Restante'],
-                        datasets: [{
-                            data: [porcentajeCompletado, Math.max(0, 100 - porcentajeCompletado)],
-                            backgroundColor: [
-                                porcentajeCompletado >= 100 ? '#28a745' : '#36a2eb', // Verde si completó, azul si no
-                                '#e9ecef'
-                            ],
-                            circumference: 180, // Medio círculo
-                            rotation: 270
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Progreso Hacia Meta Diaria (8 horas)'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        if (context.dataIndex === 0) {
-                                            const horas = Math.floor(horasDia);
-                                            const minutos = Math.round((horasDia - horas) * 60);
-                                            return `Progreso: ${horas}h ${minutos}m (${porcentajeCompletado.toFixed(1)}%)`;
-                                        }
-                                        return '';
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            });
-        </script>
-    {% endblock %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        // Obtener los datos
-        const tiempoSemana = {{ totalTimeSemana|json_encode|raw }};
-
-        // Convertir a horas decimales
-        function convertirAHoras(tiempo) {
-            const horas = parseFloat(tiempo.hours);
-            const minutos = parseFloat(tiempo.minutes);
-            return horas + (minutos / 60);
-        }
-
-        const horasSemana = convertirAHoras(tiempoSemana);
-
-        // Meta semanal (por ejemplo, 40 horas)
-        const metaSemanal = 40;
-        const porcentajeCompletado = (horasSemana / metaSemanal) * 100;
-
-        // Crear el gráfico
-        const ctx = document.getElementById('weeklyProgressChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Progreso Semanal'],
-                datasets: [{
-                    label: 'Horas Completadas',
-                    data: [horasSemana],
-                    backgroundColor: porcentajeCompletado >= 100 ? '#28a745' : '#36a2eb', // Verde si completó, azul si no
-                    borderWidth: 1
-                }, {
-                    label: 'Meta',
-                    data: [metaSemanal],
-                    backgroundColor: 'rgba(200, 200, 200, 0.3)',
-                    borderColor: '#666',
-                    borderWidth: 1,
-                    borderDash: [5, 5],
-                    type: 'bar'
-                }]
-            },
-            options: {
-                indexAxis: 'y', // Hace que las barras sean horizontales
-                responsive: true,
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        max: Math.max(metaSemanal, horasSemana) * 1.1,
-                        title: {
-                            display: true,
-                            text: 'Horas'
-                        }
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Progreso Hacia Meta Semanal',
-                        font: {
-                            size: 16
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const horas = Math.floor(context.raw);
-                                const minutos = Math.round((context.raw - horas) * 60);
-                                const porcentaje = ((context.raw / metaSemanal) * 100).toFixed(1);
-                                return `${context.dataset.label}: ${horas}h ${minutos}m (${porcentaje}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Agregar información textual del progreso
-        const infoDiv = document.getElementById('weeklyProgressInfo');
-            if (infoDiv) {
-                const horas = Math.floor(horasSemana);
-                const minutos = Math.round((horasSemana - horas) * 60);
-                infoDiv.innerHTML = `
-                    <div class="progress-info" style="text-align: center; margin-top: 20px;">
-                        <div style="font-size: 1.2em; margin-bottom: 10px;">
-                            Progreso: ${horas}h ${minutos}m de ${metaSemanal}h
-                        </div>
-                        <div style="font-size: 1.1em; color: ${porcentajeCompletado >= 100 ? '#28a745' : '#36a2eb'};">
-                            ${porcentajeCompletado.toFixed(1)}% completado
-                        </div>
-                    </div>
-                `;
-            }
-        });
-    </script>
-
+    <a href="{{ path('goalHoursStudy', { id: materium.id }) }}" class="btn btn-primary">
+    Definir Meta de Horas de Estudio
+</a>
 
     <!-- Navigation Links -->
     <div class="navigation-links">

@@ -37,6 +37,9 @@ class Materia
     #[ORM\OneToMany(targetEntity: Cronometro::class, mappedBy: 'materia')]
     private Collection $cronometros;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $dailyStudyGoalHours = null;
+
     public function __construct()
     {
         $this->tareas = new ArrayCollection();
@@ -141,6 +144,18 @@ class Materia
     {
         $this->dailyGoal = $dailyGoal;
     
+        return $this;
+    }
+
+    public function getDailyStudyGoalHours(): ?int
+    {
+        return $this->dailyStudyGoalHours;
+    }
+
+    public function setDailyStudyGoalHours(?int $dailyStudyGoalHours): static
+    {
+        $this->dailyStudyGoalHours = $dailyStudyGoalHours;
+
         return $this;
     }
 }
