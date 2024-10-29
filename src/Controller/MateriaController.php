@@ -178,7 +178,7 @@ class MateriaController extends AbstractController
             $entityManager->flush();
 
             // Redirigir o mostrar un mensaje de éxito
-            return $this->redirectToRoute('some_route_name'); // Cambia esto a la ruta deseada
+            return $this->redirectToRoute('app_materia_index'); // Cambia esto a la ruta deseada
         }
 
         return $this->render('materia/goalHoursStudy.html.twig', [
