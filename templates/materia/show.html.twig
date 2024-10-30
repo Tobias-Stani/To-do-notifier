@@ -186,10 +186,14 @@
                                     <div class="progress-container">
                                         <div class="progress-info">
                                             <span>Progreso semanal</span>
-                                            <span>65%</span>
+                                            <span>{{porcentajeSemanal}}%</span>
                                         </div>
                                         <div class="progress-bar-container">
-                                            <div class="progress-bar" style="width: 65%"></div>
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: {{ porcentajeSemanal }}%" role="progressbar" 
+                                                     aria-valuenow="{{ porcentajeSemanal }}" aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                    </div>
                                         </div>
                                         <div class="progress-label">
                                             Objetivo: {{tiempoObjetivoSemanal}} horas
@@ -210,7 +214,11 @@
                                             <span>45%</span>
                                         </div>
                                         <div class="progress-bar-container">
-                                            <div class="progress-bar" style="width: 45%"></div>
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: {{ porcentajeDiario }}%" role="progressbar" 
+                                                     aria-valuenow="{{ porcentajeDiario }}" aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="progress-label">
                                             Objetivo: {{tiempoObjetivoDiario}} horas

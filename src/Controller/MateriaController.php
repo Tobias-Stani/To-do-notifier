@@ -50,21 +50,33 @@ class MateriaController extends AbstractController
     #[Route('/{id}', name: 'app_materia_show', methods: ['GET'])]
     public function show(Materia $materium, TareaRepository $tareaRepository, CronometroRepository $cronometroRepository): Response
     {
-        // Obtener todas las tareas de la materia
         $tareas = $tareaRepository->findBy(['materia' => $materium->getId()]);
+        $ultimasTareas = $tareaRepository->findBy(['materia' => $materium->getId()], ['fecha' => 'DESC'], 5);
     
         // Obtener los últimos 5 cronómetros de la materia usando el nuevo método
         $timers = $cronometroRepository->findLastFiveByMateria($materium->getId());
     
-        // Obtener las últimas 5 tareas
-        $ultimasTareas = $tareaRepository->findBy(['materia' => $materium->getId()], ['fecha' => 'DESC'], 5);
 
         $totalTimeSemana = $cronometroRepository->findTotalTimeByWeekAndMateria($materium->getId());
-
         $totalTimeDia = $cronometroRepository->findTotalTimeByDayAndMateria($materium->getId());
 
         $objectiveDayGoal = $materium->getDailyGoal();
         $objectiveWeekGoal = $materium->getWeekGoal();
+
+        $totalMinutesCompleted = ($totalTimeSemana['hours'] * 60) + $totalTimeSemana['minutes'];
+        $objectiveInMinutes = $objectiveWeekGoal * 60;
+
+        //calcula porcentaje cumplido del tiempo de estudio
+        $percentage = ($totalMinutesCompleted / $objectiveInMinutes) * 100;
+
+        //daily calculator
+        
+        $totalMinutesCompletedDaily = ($totalTimeDia['hours'] * 60) + $totalTimeDia['minutes'];
+        $objectiveInMinutesDaily = $objectiveDayGoal * 60;
+
+        //calcula porcentaje cumplido del tiempo de estudio
+        $percentageDaily = ($totalMinutesCompletedDaily / $objectiveInMinutesDaily) * 100;
+
 
         // Preparar eventos para el calendario
         $events = [];
@@ -112,7 +124,9 @@ class MateriaController extends AbstractController
             'totalTimeSemana' => $totalTimeSemana,
             'totalTimeDia' => $totalTimeDia, 
             'tiempoObjetivoDiario' => $objectiveDayGoal,
-            'tiempoObjetivoSemanal' => $objectiveWeekGoal
+            'tiempoObjetivoSemanal' => $objectiveWeekGoal,
+            'porcentajeSemanal' => $percentage,
+            'porcentajeDiario' => $percentageDaily,
         ]);
     }
     
