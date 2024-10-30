@@ -63,8 +63,8 @@ class MateriaController extends AbstractController
 
         $totalTimeDia = $cronometroRepository->findTotalTimeByDayAndMateria($materium->getId());
 
-        
-        //dd($totalTimeSemana);
+        $objectiveDayGoal = $materium->getDailyGoal();
+        $objectiveWeekGoal = $materium->getWeekGoal();
 
         // Preparar eventos para el calendario
         $events = [];
@@ -111,6 +111,8 @@ class MateriaController extends AbstractController
             'tareas' => $tareas,
             'totalTimeSemana' => $totalTimeSemana,
             'totalTimeDia' => $totalTimeDia, 
+            'tiempoObjetivoDiario' => $objectiveDayGoal,
+            'tiempoObjetivoSemanal' => $objectiveWeekGoal
         ]);
     }
     
