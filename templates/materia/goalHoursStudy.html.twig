@@ -1,9 +1,8 @@
-{% extends 'base.html.twig' %}
-
+{% extends 'extends/iboxContent.html.twig' %}
 {% block title %}Nueva Materia{% endblock %}
 
-{% block body %}
-    <h1>Registrar Materia</h1>
+{% block contenidoIbox %}
+    <h1>Espectativa de estudio</h1>
 
         {{ form_start(form) }}
         {{ form_row(form.dailyGoal) }}

@@ -14,12 +14,12 @@ class GoalHoursStudyType extends AbstractType
     {
         $builder
             ->add('dailyGoal', IntegerType::class, [
-                'label' => 'Meta diaria (en minutos)',
+                'label' => 'Meta diaria (en horas)',
                 'required' => false,
                 'attr' => ['min' => 0],
             ])
             ->add('dailyStudyGoalHours', IntegerType::class, [
-                'label' => 'Meta diaria de estudio (en horas)',
+                'label' => 'Meta semanal de estudio (en horas)',
                 'required' => false,
                 'attr' => ['min' => 0],
             ]);

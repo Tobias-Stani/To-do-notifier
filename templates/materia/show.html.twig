@@ -123,6 +123,9 @@
                             <button class="timer-button reset-button" id="resetBtn">
                                 <i class="fas fa-redo"></i> Reiniciar
                             </button>
+                            <a href="{{ path('goalHoursStudy', { id: materium.id }) }}" class="btn btn-primary timer-button reset-button">
+                                Definir Meta de Horas de Estudio
+                            </a>
                         </div>
 
                         <div class="timer-laps">
@@ -189,7 +192,7 @@
                                             <div class="progress-bar" style="width: 65%"></div>
                                         </div>
                                         <div class="progress-label">
-                                            Objetivo: 25 horas
+                                            Objetivo: x horas
                                         </div>
                                     </div>
                                 </div>
@@ -210,7 +213,7 @@
                                             <div class="progress-bar" style="width: 45%"></div>
                                         </div>
                                         <div class="progress-label">
-                                            Objetivo: 5 horas
+                                            Objetivo: x horas
                                         </div>
                                     </div>
                                 </div>
@@ -221,11 +224,6 @@
             </div>
         </div>
     </div>
-
-
-    <a href="{{ path('goalHoursStudy', { id: materium.id }) }}" class="btn btn-primary">
-    Definir Meta de Horas de Estudio
-</a>
 
     <!-- Navigation Links -->
     <div class="navigation-links">
