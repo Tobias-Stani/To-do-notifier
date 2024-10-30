@@ -18,7 +18,7 @@ class GoalHoursStudyType extends AbstractType
                 'required' => false,
                 'attr' => ['min' => 0],
             ])
-            ->add('dailyStudyGoalHours', IntegerType::class, [
+            ->add('weekGoal', IntegerType::class, [
                 'label' => 'Meta semanal de estudio (en horas)',
                 'required' => false,
                 'attr' => ['min' => 0],

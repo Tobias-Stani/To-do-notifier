@@ -38,7 +38,7 @@ class Materia
     private Collection $cronometros;
 
     #[ORM\Column(nullable: true)]
-    private ?int $dailyStudyGoalHours = null;
+    private ?int $weekGoal = null; // Renombrado el campo
 
     public function __construct()
     {
@@ -96,7 +96,6 @@ class Materia
     public function removeTarea(Tarea $tarea): static
     {
         if ($this->tareas->removeElement($tarea)) {
-            // set the owning side to null (unless already changed)
             if ($tarea->getMateria() === $this) {
                 $tarea->setMateria(null);
             }
@@ -117,7 +116,7 @@ class Materia
     {
         if (!$this->cronometros->contains($cronometro)) {
             $this->cronometros->add($cronometro);
-            $cronometro->setMateria($this); // Cambiado a setMateria()
+            $cronometro->setMateria($this);
         }
 
         return $this;
@@ -126,8 +125,7 @@ class Materia
     public function removeCronometro(Cronometro $cronometro): static
     {
         if ($this->cronometros->removeElement($cronometro)) {
-            // set the owning side to null (unless already changed)
-            if ($cronometro->getMateria() === $this) { // Cambiado a getMateria()
+            if ($cronometro->getMateria() === $this) {
                 $cronometro->setMateria(null);
             }
         }
@@ -147,14 +145,14 @@ class Materia
         return $this;
     }
 
-    public function getDailyStudyGoalHours(): ?int
+    public function getWeekGoal(): ?int // Cambiado a getWeekGoal
     {
-        return $this->dailyStudyGoalHours;
+        return $this->weekGoal;
     }
 
-    public function setDailyStudyGoalHours(?int $dailyStudyGoalHours): static
+    public function setWeekGoal(?int $weekGoal): static // Cambiado a setWeekGoal
     {
-        $this->dailyStudyGoalHours = $dailyStudyGoalHours;
+        $this->weekGoal = $weekGoal;
 
         return $this;
     }
