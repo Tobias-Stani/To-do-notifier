@@ -125,8 +125,8 @@ class MateriaController extends AbstractController
             'totalTimeDia' => $totalTimeDia, 
             'tiempoObjetivoDiario' => $objectiveDayGoal,
             'tiempoObjetivoSemanal' => $objectiveWeekGoal,
-            'porcentajeSemanal' => $percentage,
-            'porcentajeDiario' => $percentageDaily,
+            'porcentajeSemanal' => number_format(($totalMinutesCompleted / ($objectiveWeekGoal * 60)) * 100, 2),
+            'porcentajeDiario' => number_format(($totalMinutesCompletedDaily / ($objectiveDayGoal * 60)) * 100, 2)
         ]);
     }
     
