@@ -118,6 +118,7 @@ class TareaController extends AbstractController
             }
         }
     
+        // Crear el formulario y manejar la solicitud
         $form = $this->createForm(TareaType::class, $tarea);
         $form->handleRequest($request);
     
@@ -125,7 +126,9 @@ class TareaController extends AbstractController
             $entityManager->persist($tarea);
             $entityManager->flush();
     
-            return $this->redirectToRoute('app_tarea_index', [], Response::HTTP_SEE_OTHER);
+            $materiaId = $tarea->getMateria()->getId();
+    
+            return $this->redirectToRoute('app_materia_show', ['id' => $materiaId], Response::HTTP_SEE_OTHER);
         }
     
         return $this->render('tarea/new.html.twig', [
@@ -133,6 +136,7 @@ class TareaController extends AbstractController
             'form' => $form,
         ]);
     }
+    
     
 
     #[Route('/{id}', name: 'app_tarea_show', methods: ['GET'])]
