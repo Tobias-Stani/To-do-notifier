@@ -268,8 +268,8 @@
                 },
                 dateClick: function(info) {
                     // Redirigir a la página de nueva tarea con materiaId y fecha
-                    window.location.href = "{{ path('app_tarea_new') }}?fecha=" + info.dateStr + "&materiaId=" + materiaId;
-                },
+                    window.location.href = "{{ path('app_tarea_new') }}?fecha=" + info.dateStr + "&materia_id=" + materiaId;
+                    },
                 eventClick: function(info) {
                     // Mejorar la visualización del evento
                     Swal.fire({

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Cronometro;
+use App\Entity\Materia;
 use App\Entity\Tarea;
 use App\Form\TareaType;
 use App\Repository\CronometroRepository;
@@ -108,8 +109,7 @@ class TareaController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $tarea = new Tarea();
-        
-        // Obtener la fecha del parámetro de consulta
+    
         $fechaParam = $request->query->get('fecha');
         if ($fechaParam) {
             $fecha = \DateTime::createFromFormat('Y-m-d', $fechaParam);
@@ -118,7 +118,14 @@ class TareaController extends AbstractController
             }
         }
     
-        // Crear el formulario y manejar la solicitud
+        $materiaId = $request->query->get('materia_id'); 
+        if ($materiaId) {
+            $materia = $entityManager->getRepository(Materia::class)->find($materiaId);
+            if ($materia) {
+                $tarea->setMateria($materia); 
+            }
+        }
+    
         $form = $this->createForm(TareaType::class, $tarea);
         $form->handleRequest($request);
     
@@ -126,17 +133,14 @@ class TareaController extends AbstractController
             $entityManager->persist($tarea);
             $entityManager->flush();
     
-            $materiaId = $tarea->getMateria()->getId();
-    
             return $this->redirectToRoute('app_materia_show', ['id' => $materiaId], Response::HTTP_SEE_OTHER);
         }
     
         return $this->render('tarea/new.html.twig', [
             'tarea' => $tarea,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
-    }
-    
+    }    
     
 
     #[Route('/{id}', name: 'app_tarea_show', methods: ['GET'])]
