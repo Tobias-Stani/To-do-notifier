@@ -194,19 +194,20 @@ class MateriaController extends AbstractController
     public function goalHoursStudy(Request $request, Materia $materia, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(GoalHoursStudyType::class, $materia);
-
+    
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($materia);
             $entityManager->flush();
-
-            // Redirigir o mostrar un mensaje de éxito
-            return $this->redirectToRoute('app_materia_index'); // Cambia esto a la ruta deseada
+    
+            // Redirigir a la ruta app_materia_show con el ID de la materia
+            return $this->redirectToRoute('app_materia_show', ['id' => $materia->getId()]);
         }
-
+    
         return $this->render('materia/goalHoursStudy.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+    
 
 }
