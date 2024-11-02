@@ -66,16 +66,23 @@ class MateriaController extends AbstractController
         $totalMinutesCompleted = ($totalTimeSemana['hours'] * 60) + $totalTimeSemana['minutes'];
         $objectiveInMinutes = $objectiveWeekGoal * 60;
 
-        //calcula porcentaje cumplido del tiempo de estudio
-        $percentage = ($totalMinutesCompleted / $objectiveInMinutes) * 100;
-
-        //daily calculator
+        // Cálculo del porcentaje general
+        if ($objectiveInMinutes > 0) {
+            $percentage = number_format(($totalMinutesCompleted / ($objectiveWeekGoal * 60)) * 100, 2);
+        } else {
+            $percentage = 0; // O podrías usar null o una bandera para indicar que no se puede calcular
+        }
         
+        // Cálculo diario
         $totalMinutesCompletedDaily = ($totalTimeDia['hours'] * 60) + $totalTimeDia['minutes'];
         $objectiveInMinutesDaily = $objectiveDayGoal * 60;
-
-        //calcula porcentaje cumplido del tiempo de estudio
-        $percentageDaily = ($totalMinutesCompletedDaily / $objectiveInMinutesDaily) * 100;
+        
+        // Calcula porcentaje cumplido del tiempo de estudio diario
+        if ($objectiveInMinutesDaily > 0) {
+            $percentageDaily = number_format(($totalMinutesCompletedDaily / ($objectiveDayGoal * 60)) * 100, 2);
+        } else {
+            $percentageDaily = 0; // O usa otra lógica según tus necesidades
+        }
 
 
         // Preparar eventos para el calendario
@@ -125,8 +132,8 @@ class MateriaController extends AbstractController
             'totalTimeDia' => $totalTimeDia, 
             'tiempoObjetivoDiario' => $objectiveDayGoal,
             'tiempoObjetivoSemanal' => $objectiveWeekGoal,
-            'porcentajeSemanal' => number_format(($totalMinutesCompleted / ($objectiveWeekGoal * 60)) * 100, 2),
-            'porcentajeDiario' => number_format(($totalMinutesCompletedDaily / ($objectiveDayGoal * 60)) * 100, 2)
+            'porcentajeSemanal' => $totalMinutesCompleted,
+            'porcentajeDiario' => $totalMinutesCompletedDaily 
         ]);
     }
     
