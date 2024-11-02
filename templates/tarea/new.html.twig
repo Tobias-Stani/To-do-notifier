@@ -7,5 +7,11 @@
 
     {{ include('tarea/_form.html.twig') }}
 
-    <a href="{{ path('app_materia_show', {'id': tarea.materia.id}) }}" class="btn btn-secondary mt-3">Volver a la Materia</a>
+    {% if tarea.materia %}
+        <a href="{{ path('app_materia_show', {'id': tarea.materia.id}) }}" class="btn btn-secondary mt-3">Volver a la Materia</a>
+    {% else %}
+        <p class="text-muted">No se ha asignado una materia a esta tarea.</p>
+    {% endif %}
+
+
 {% endblock %}
