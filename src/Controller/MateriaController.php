@@ -64,15 +64,15 @@ class MateriaController extends AbstractController
         $objectiveWeekGoal = $materium->getWeekGoal();
 
         $totalMinutesCompleted = ($totalTimeSemana['hours'] * 60) + $totalTimeSemana['minutes'];
-        $objectiveInMinutes = $objectiveWeekGoal * 60;
-
-        // Cálculo del porcentaje general
+        $objectiveInMinutes = $objectiveWeekGoal * 60; // Asegúrate que $objectiveWeekGoal es 2 para este caso
+        
+        // Cálculo del porcentaje semanal
         if ($objectiveInMinutes > 0) {
-            $percentage = number_format(($totalMinutesCompleted / ($objectiveWeekGoal * 60)) * 100, 2);
+            $percentage = number_format(($totalMinutesCompleted / $objectiveInMinutes) * 100, 2); // Asegúrate de usar $objectiveInMinutes
         } else {
             $percentage = 0; // O podrías usar null o una bandera para indicar que no se puede calcular
         }
-        
+
         // Cálculo diario
         $totalMinutesCompletedDaily = ($totalTimeDia['hours'] * 60) + $totalTimeDia['minutes'];
         $objectiveInMinutesDaily = $objectiveDayGoal * 60;
@@ -132,8 +132,8 @@ class MateriaController extends AbstractController
             'totalTimeDia' => $totalTimeDia, 
             'tiempoObjetivoDiario' => $objectiveDayGoal,
             'tiempoObjetivoSemanal' => $objectiveWeekGoal,
-            'porcentajeSemanal' => $totalMinutesCompleted,
-            'porcentajeDiario' => $totalMinutesCompletedDaily 
+            'porcentajeSemanal' => $percentage,
+            'porcentajeDiario' => $percentageDaily 
         ]);
     }
     
