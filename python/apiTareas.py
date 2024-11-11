@@ -1,12 +1,31 @@
 import mysql.connector
+import requests
 from mysql.connector import Error
+
+# Token de tu bot de Telegram (lo obtuviste de BotFather)
+TELEGRAM_TOKEN = 'TU_BOT_TOKEN'
+# chat_id donde quieres enviar el mensaje (tu chat_id o el del grupo)
+CHAT_ID = 'TU_CHAT_ID'
+
+def enviar_mensaje_telegram(mensaje):
+    """Envía un mensaje al canal o chat de Telegram."""
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    payload = {
+        'chat_id': CHAT_ID,
+        'text': mensaje
+    }
+    response = requests.post(url, data=payload)
+    if response.status_code == 200:
+        print("Mensaje enviado exitosamente a Telegram.")
+    else:
+        print("Error al enviar el mensaje a Telegram.")
 
 def conectar_bd():
     """Establece la conexión a la base de datos MySQL."""
     try:
         conexion = mysql.connector.connect(
             host="#",
-            port=#,
+            port=3306,
             user="#",
             password="#",
             database="#"
@@ -38,16 +57,16 @@ def obtener_tareas_semana(conexion):
         cursor = conexion.cursor(dictionary=True)
         cursor.execute(consulta)
         tareas = cursor.fetchall()
-        
-        # Imprimir resultados de manera más estructurada
+
         if tareas:
-            print("Tareas de la semana:")
+            mensaje = "Tareas de la semana:\n"
             for tarea in tareas:
-                print(f"Título: {tarea['titulo']}, "
-                      f"Descripción: {tarea['descripcion']}, Fecha: {tarea['fecha']}, "
-                      f"Materia: {tarea['materia_nombre']}")
+                mensaje += (f"ID: {tarea['id']}, Título: {tarea['titulo']}, "
+                            f"Descripción: {tarea['descripcion']}, Fecha: {tarea['fecha']}, "
+                            f"Materia: {tarea['materia_nombre']}\n")
+            enviar_mensaje_telegram(mensaje)
         else:
-            print("No se encontraron tareas para esta semana.")
+            enviar_mensaje_telegram("No se encontraron tareas para esta semana.")
 
     except Error as e:
         print(f"Error al obtener las tareas de la semana: {e}")
