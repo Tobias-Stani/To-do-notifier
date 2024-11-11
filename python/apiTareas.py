@@ -5,11 +5,11 @@ def conectar_bd():
     """Establece la conexión a la base de datos MySQL."""
     try:
         conexion = mysql.connector.connect(
-            host="172.26.0.2",
-            port=3306,
-            user="root",
-            password="root",
-            database="HistorialPartidos"
+            host="#",
+            port=#,
+            user="#",
+            password="#",
+            database="#"
         )
         if conexion.is_connected():
             print("Conexión exitosa a la base de datos")
