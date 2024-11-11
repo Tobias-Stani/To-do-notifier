@@ -42,66 +42,24 @@ class TareaController extends AbstractController
     }
         
 
-    #[Route('/', name: 'app_tarea_index', methods: ['GET'])]
-    public function index(TareaRepository $tareaRepository, CronometroRepository $cronometroRepository): Response
+    #[Route('/api', name: 'app_tarea_index', methods: ['GET'])]
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        $tareas = $tareaRepository->findAll();
-    
-        $ultimasTareas = $tareaRepository->findBy([], ['fecha' => 'DESC'], 5);
-        $cronometros = $cronometroRepository->findAll();
-        $totalTimeInSeconds = 0;
-
-        // Obtener la fecha actual
-        $today = new \DateTime();
-        $today->setTime(0, 0, 0);
-
-        foreach ($cronometros as $cronometro) {
-            $cronometro->formattedTime = $this->formatTime($cronometro->getTime());
-            $totalTimeInSeconds += $cronometro->getTime();
-        }
-
-        $formattedTotalTime = $this->formatTime($totalTimeInSeconds);
-
-        //obtiene los registros de tiempos del dia.
-        $cronometros = $cronometroRepository->createQueryBuilder('c')
-        ->where('c.date >= :todayStart')
-        ->andWhere('c.date < :tomorrowStart')
-        ->setParameter('todayStart', $today)
-        ->setParameter('tomorrowStart', (clone $today)->modify('+1 day'))
-        ->getQuery()
-        ->getResult();
-
-        //calcula tareas de la semana.
-        $inicioSemana = new \DateTime('monday this week');
-        $finSemana = new \DateTime('sunday this week');
-        $finSemana->setTime(23, 59, 59);
-
-        // Obtener las tareas de la semana actual
-        $tareasSemana = $tareaRepository->createQueryBuilder('t')
-            ->where('t.fecha >= :inicioSemana')
-            ->andWhere('t.fecha <= :finSemana')
-            ->setParameter('inicioSemana', $inicioSemana)
-            ->setParameter('finSemana', $finSemana)
-            ->getQuery()
-            ->getResult();
-
-        $events = [];
+        // Recuperar todas las tareas desde el repositorio
+        $tareas = $entityManager->getRepository(Tarea::class)->findAll();
+        // Serializar las tareas en formato JSON
+        $data = [];
         foreach ($tareas as $tarea) {
-            $events[] = [
+            $data[] = [
                 'id' => $tarea->getId(),
-                'title' => $tarea->getTitulo(),
-                'start' => $tarea->getFecha()->format('Y-m-d'),
+                'titulo' => $tarea->getTitulo(),
+                'descripcion' => $tarea->getDescripcion(),
+                'fecha' => $tarea->getFecha()->format('Y-m-d'), // Formatear la fecha como string
             ];
         }
     
-        return $this->render('tarea/index.html.twig', [
-            'tareas' => $tareas,
-            'ultimasTareas' => $ultimasTareas, 
-            'events' => json_encode($events), 
-            'tareasSemana' => $tareasSemana,
-            'cronometros' => $cronometros,
-            'totalTime' => $formattedTotalTime
-        ]);
+        // Devolver la respuesta JSON
+        return new JsonResponse($data, 200);
     }
     
 
@@ -231,5 +189,4 @@ class TareaController extends AbstractController
             'totalSeconds' => $totalSeconds,
         ]);
     }
-
 }
