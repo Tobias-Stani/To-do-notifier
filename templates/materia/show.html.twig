@@ -186,10 +186,14 @@
                                     <div class="progress-container">
                                         <div class="progress-info">
                                             <span>Progreso semanal</span>
-                                            <span>65%</span>
+                                            <span>{{porcentajeSemanal}}%</span>
                                         </div>
                                         <div class="progress-bar-container">
-                                            <div class="progress-bar" style="width: 65%"></div>
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: {{ porcentajeSemanal }}%" role="progressbar" 
+                                                     aria-valuenow="{{ porcentajeSemanal }}" aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                    </div>
                                         </div>
                                         <div class="progress-label">
                                             Objetivo: {{tiempoObjetivoSemanal}} horas
@@ -207,10 +211,14 @@
                                     <div class="progress-container">
                                         <div class="progress-info">
                                             <span>Progreso diario</span>
-                                            <span>45%</span>
+                                            <span>{{porcentajeDiario}}%</span>
                                         </div>
                                         <div class="progress-bar-container">
-                                            <div class="progress-bar" style="width: 45%"></div>
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: {{ porcentajeDiario }}%" role="progressbar" 
+                                                     aria-valuenow="{{ porcentajeDiario }}" aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="progress-label">
                                             Objetivo: {{tiempoObjetivoDiario}} horas
@@ -227,7 +235,7 @@
 
     <!-- Navigation Links -->
     <div class="navigation-links">
-        <a href="{{ path('app_materia_index') }}" class="custom-button">
+        <a href="{{ path('app_home') }}" class="custom-button">
             <i class="fas fa-arrow-left"></i> Volver
         </a>
         <a href="{{ path('app_materia_edit', {'id': materium.id}) }}" class="custom-button">
@@ -260,8 +268,8 @@
                 },
                 dateClick: function(info) {
                     // Redirigir a la página de nueva tarea con materiaId y fecha
-                    window.location.href = "{{ path('app_tarea_new') }}?fecha=" + info.dateStr + "&materiaId=" + materiaId;
-                },
+                    window.location.href = "{{ path('app_tarea_new') }}?fecha=" + info.dateStr + "&materia_id=" + materiaId;
+                    },
                 eventClick: function(info) {
                     // Mejorar la visualización del evento
                     Swal.fire({

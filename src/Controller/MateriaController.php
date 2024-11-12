@@ -50,21 +50,40 @@ class MateriaController extends AbstractController
     #[Route('/{id}', name: 'app_materia_show', methods: ['GET'])]
     public function show(Materia $materium, TareaRepository $tareaRepository, CronometroRepository $cronometroRepository): Response
     {
-        // Obtener todas las tareas de la materia
         $tareas = $tareaRepository->findBy(['materia' => $materium->getId()]);
+        $ultimasTareas = $tareaRepository->findBy(['materia' => $materium->getId()], ['fecha' => 'DESC'], 5);
     
         // Obtener los últimos 5 cronómetros de la materia usando el nuevo método
         $timers = $cronometroRepository->findLastFiveByMateria($materium->getId());
     
-        // Obtener las últimas 5 tareas
-        $ultimasTareas = $tareaRepository->findBy(['materia' => $materium->getId()], ['fecha' => 'DESC'], 5);
 
         $totalTimeSemana = $cronometroRepository->findTotalTimeByWeekAndMateria($materium->getId());
-
         $totalTimeDia = $cronometroRepository->findTotalTimeByDayAndMateria($materium->getId());
 
         $objectiveDayGoal = $materium->getDailyGoal();
         $objectiveWeekGoal = $materium->getWeekGoal();
+
+        $totalMinutesCompleted = ($totalTimeSemana['hours'] * 60) + $totalTimeSemana['minutes'];
+        $objectiveInMinutes = $objectiveWeekGoal * 60; // Asegúrate que $objectiveWeekGoal es 2 para este caso
+        
+        // Cálculo del porcentaje semanal
+        if ($objectiveInMinutes > 0) {
+            $percentage = number_format(($totalMinutesCompleted / $objectiveInMinutes) * 100, 2); // Asegúrate de usar $objectiveInMinutes
+        } else {
+            $percentage = 0; // O podrías usar null o una bandera para indicar que no se puede calcular
+        }
+
+        // Cálculo diario
+        $totalMinutesCompletedDaily = ($totalTimeDia['hours'] * 60) + $totalTimeDia['minutes'];
+        $objectiveInMinutesDaily = $objectiveDayGoal * 60;
+        
+        // Calcula porcentaje cumplido del tiempo de estudio diario
+        if ($objectiveInMinutesDaily > 0) {
+            $percentageDaily = number_format(($totalMinutesCompletedDaily / ($objectiveDayGoal * 60)) * 100, 2);
+        } else {
+            $percentageDaily = 0; // O usa otra lógica según tus necesidades
+        }
+
 
         // Preparar eventos para el calendario
         $events = [];
@@ -112,7 +131,9 @@ class MateriaController extends AbstractController
             'totalTimeSemana' => $totalTimeSemana,
             'totalTimeDia' => $totalTimeDia, 
             'tiempoObjetivoDiario' => $objectiveDayGoal,
-            'tiempoObjetivoSemanal' => $objectiveWeekGoal
+            'tiempoObjetivoSemanal' => $objectiveWeekGoal,
+            'porcentajeSemanal' => $percentage,
+            'porcentajeDiario' => $percentageDaily 
         ]);
     }
     
@@ -173,19 +194,20 @@ class MateriaController extends AbstractController
     public function goalHoursStudy(Request $request, Materia $materia, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(GoalHoursStudyType::class, $materia);
-
+    
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($materia);
             $entityManager->flush();
-
-            // Redirigir o mostrar un mensaje de éxito
-            return $this->redirectToRoute('app_materia_index'); // Cambia esto a la ruta deseada
+    
+            // Redirigir a la ruta app_materia_show con el ID de la materia
+            return $this->redirectToRoute('app_materia_show', ['id' => $materia->getId()]);
         }
-
+    
         return $this->render('materia/goalHoursStudy.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+    
 
 }

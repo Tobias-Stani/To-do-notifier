@@ -33,7 +33,7 @@ class CuatrimestreController extends AbstractController
             $entityManager->persist($cuatrimestre);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_cuatrimestre_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('cuatrimestre/new.html.twig', [
