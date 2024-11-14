@@ -2,11 +2,21 @@ import mysql.connector
 import requests
 from mysql.connector import Error
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 
-# Token de tu bot de Telegram (lo obtuviste de BotFather)
-TELEGRAM_TOKEN = ''
-# chat_id donde quieres enviar el mensaje (tu chat_id o el del grupo)
-CHAT_ID = ''
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
+
+# Acceder a las variables de entorno
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
+
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 def enviar_mensaje_telegram(mensaje):
     """Envía un mensaje al canal o chat de Telegram."""
@@ -26,11 +36,11 @@ def conectar_bd():
     """Establece la conexión a la base de datos MySQL."""
     try:
         conexion = mysql.connector.connect(
-            host="",
-            port=3,
-            user="",
-            password="",
-            database=""
+            host=DB_HOST,
+            port=DB_PORT,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            database=DB_NAME
         )
         if conexion.is_connected():
             print("Conexión exitosa a la base de datos")
@@ -105,4 +115,4 @@ if __name__ == "__main__":
     conexion = conectar_bd()
     if conexion:
         obtener_tareas_semana(conexion)
-        cerrar_conexion(conexion) 
+        cerrar_conexion(conexion)
